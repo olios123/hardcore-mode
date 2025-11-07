@@ -1,0 +1,253 @@
+#
+# CC Creative Commons 2025
+# Attribution-NoDerivatives 4.0 International
+# Author olios
+#
+#
+# You can use colors in your messages
+# https://minecraft.fandom.com/wiki/Formatting_codes
+#
+# IMPORTANT!
+# Any changes to this file require the server to be reloaded or restarted
+#
+#
+#   _____                 _      _   _
+#  |_   _| _ __ _ _ _  __| |__ _| |_(_)___ _ _
+#    | || '_/ _` | ' \(_-< / _` |  _| / _ \ ' \
+#    |_||_| \__,_|_||_/__/_\__,_|\__|_\___/_||_|
+#
+#                  by lrzUCC_
+#            using Google Translate
+#
+#
+#
+#  _______  ___      __   __  _______  ___   __    _
+# |       ||   |    |  | |  ||       ||   | |  |  | |
+# |    _  ||   |    |  | |  ||    ___||   | |   |_| |
+# |   |_| ||   |    |  |_|  ||   | __ |   | |       |
+# |    ___||   |___ |       ||   ||  ||   | |  _    |
+# |   |    |       ||       ||   |_| ||   | | | |   |
+# |___|    |_______||_______||_______||___| |_|  |__|
+#
+#
+#
+# ___________________________________________________________________________
+enable-plugin: "Plugin HardcoreMode è stato abilitato"
+disable-plugin: "Plugin HardcoreMode è stato disabilitato"
+loaded-language-file: "%language%.yml è stato caricato"
+language-file-not-found: "File %language%.yml non trovato. Il File en.yml è stato caricato"
+reload-complete: "il plugin HardcoreMode è stato ricaricato"
+# ___________________________________________________________________________
+#
+#
+#
+#  ___      ___   __   __  _______  _______
+# |   |    |   | |  | |  ||       ||       |
+# |   |    |   | |  |_|  ||    ___||  _____|
+# |   |    |   | |       ||   |___ | |_____
+# |   |___ |   | |       ||    ___||_____  |
+# |       ||   |  |     | |   |___  _____| |
+# |_______||___|   |___|  |_______||_______|
+#
+#
+#
+# ___________________________________________________________________________
+renewed-life: "&7[&4&l❤&r&7]&r &aUna delle vostre vite è stata rinnovata"
+takeover-live: "&7[&4&l❤&r&7]&r &aHai preso il controllo di &funa &alive del giocatore &f%hardcoremode_player%"
+takeover-live-max: "&7[&4&l❤&r&7]&r &6Hai già il numero massimo di vite!"
+# ___________________________________________________________________________
+#
+#
+#  _______  _______  __   __  __   __  _______  __    _  ______   _______
+# |     __||       ||  |_|  ||  |_|  ||   _   ||  |  | ||      | |       |
+# |    |   |   _   ||       ||       ||  |_|  ||   |_| ||  _    ||  _____|
+# |    |   |  | |  ||       ||       ||       ||       || | |   || |_____
+# |    |   |  |_|  ||       ||       ||       ||  _    || |_|   ||_____  |
+# |    |__||       || ||_|| || ||_|| ||   _   || | |   ||       | _____| |
+# |_______||_______||_|   |_||_|   |_||__| |__||_|  |__||______| |_______|
+#
+#
+# ___________________________________________________________________________
+cmd-lives-show: "&aIl numero di vite sarà ora visibile"
+cmd-lives-hide: "&aIl numero di vite è stato nascosto"
+cmd-lives-set: "&aIl numero di vite di &f%player% &aè stato cambiato a &f%count%"
+cmd-lives-add: "&aSono state aggiunte al player &f%player% &f%count% &avite"
+cmd-lives-remove: "&aSono state sottratte al player &f%player% &f%count% &avite"
+cmd-lives-all-set: "&aIl numero di vite per &ftutti i player &aè stato impostato a &f%count%"
+cmd-lives-all-add: "&aA &ftutti i player &asono state aggiunte &f%count% &avite"
+cmd-lives-all-remove: "&aA &ftutti i player &asono state rimosse &f%count% &avite"
+cmd-lives-amount-is-not-number: "&cIl valore fornito non è un numero"
+cmd-unbanned: "&aIl giocatore è stato unbannato"
+# ___________________________________________________________________________
+# Displaying commands
+cmd-about:
+  - "&cHardcoreMode &fintroduce un nuovo tipo di gameplay del server."
+  - ""
+  - "&fQuando muori, perdi delle vite e quando le perdi tutte, ricevi un ban temporaneo. Il plugin diversifica così il gameplay sul server e ne aumenta il livello di &cdifficoltà&f."
+  - ""
+  - "&fLe vite vengono aggiunte nel tempo e i livelli di ban diminuiscono."
+  - ""
+  - "&fDigita &c/lives &f per scoprire le tue vite e i livelli di ban."
+#
+cmd-lives:
+  - "&c❤ &4Hardcore&cMode ❤"
+  - ""
+  - "&fLives: &c%hardcoremode_lives% &7Grazie a loro eviterai il ban"
+  - "&fDeath level: &c%hardcoremode_death-level% &f(&c%hardcoremode_next-ban-time%&f) &7Specifica il livello di durata del ban"
+  - ""
+# These two messages will be shown in the lives command if the live and respawn options are enabled in the configuration as well as the ban level options.
+#
+# This information will not appear if the player cannot get extra life / his ban level cannot be reduced.
+cmd-lives-extra-life: "&fRiceverai una vita extra in: &c%hardcoremode_renewing-lives-time%"
+cmd-lives-ban-level: "&fIl tuo livello di ban verrà abbassato tra: &c%hardcoremode_ban-level-time%"
+# ___________________________________________________________________________
+#
+#
+#  _______  _______  ______    __   __  ___   _______  _______  ___   _______  __    _  _______
+# |       ||       ||    _ |  |  |_|  ||   | |       ||       ||   | |       ||  |  | ||       |
+# |    _  ||    ___||   | ||  |       ||   | |  _____||  _____||   | |   _   ||   |_| ||  _____|
+# |   |_| ||   |___ |   |_||_ |       ||   | | |_____ | |_____ |   | |  | |  ||       || |_____
+# |    ___||    ___||    __  ||       ||   | |_____  ||_____  ||   | |  |_|  ||  _    ||_____  |
+# |   |    |   |___ |   |  | || ||_|| ||   |  _____| | _____| ||   | |       || | |   | _____| |
+# |___|    |_______||___|  |_||_|   |_||___| |_______||_______||___| |_______||_|  |__||_______|
+#
+#
+# ___________________________________________________________________________
+no-permissions: "&cNon disponi di autorizzazioni sufficienti per utilizzare questo comando"
+console-command: "&cNon è possibile utilizzare questo comando dalla console"
+# ___________________________________________________________________________
+#
+#
+#  _______  ______   __   __  ___   __    _
+# |   _   ||      | |  |_|  ||   | |  |  | |
+# |  |_|  ||  _    ||       ||   | |   |_| |
+# |       || | |   ||       ||   | |       |
+# |       || |_|   ||       ||   | |  _    |
+# |   _   ||       || ||_|| ||   | | | |   |
+# |__| |__||______| |_|   |_||___| |_|  |__|
+#
+#
+# ___________________________________________________________________________
+player-reload-complete: "&aConfigurazione ricaricata con successo del plugin HardcoreMode"
+# ___________________________________________________________________________
+#
+#
+#  _______  ______    ______    _______  ______    _______
+# |       ||    _ |  |    _ |  |       ||    _ |  |       |
+# |    ___||   | ||  |   | ||  |   _   ||   | ||  |  _____|
+# |   |___ |   |_||_ |   |_||_ |  | |  ||   |_||_ | |_____
+# |    ___||    __  ||    __  ||  |_|  ||    __  ||_____  |
+# |   |___ |   |  | ||   |  | ||       ||   |  | | _____| |
+# |_______||___|  |_||___|  |_||_______||___|  |_||_______|
+#
+# ___________________________________________________________________________
+# Arguments
+argument-missing:
+  - "&cNon sono state fornite tutte le argomentazioni."
+  - "&cUsando il comando: &f%command%"
+cmd-incorrect-use: "&cHai usato questo comando in modo errato. Help &f/hardcoremode"
+cmd-player-not-found: "&cIl giocatore specificato non è stato trovato"
+cmd-not-banned: "&cQuesto giocatore non è bannato"
+# ___________________________________________________________________________
+#
+#
+#  _______  __   __  _______  _______
+# |     __||  | |  ||   _   ||       |
+# |    |   |  |_|  ||  |_|  ||_     _|
+# |    |   |       ||       |  |   |
+# |    |   |       ||       |  |   |
+# |    |__||   _   ||   _   |  |   |
+# |_______||__| |__||__| |__|  |___|
+#
+#
+# ___________________________________________________________________________
+# Death messages
+next-death-info-message: "&7[&4&l❤&r&7]&r &cIl tuo momento della morte è finito. La prossima durata del ban sarà &f&l%time%"
+# ___________________________________________________________________________
+#
+# ___________________________________________________________________________
+# Ban message
+ban-reason:
+  - "&4&lHardcore Mode"
+  - "&r&cSei morto e sei stato bannato per &f&l%time%"
+  - "&cIl ban termina &f&l%full-date%"
+  - ""
+  - "%reason%"
+# ___________________________________________________________________________
+#
+# ___________________________________________________________________________
+# Death reason
+death-prefix: "&7[&4&l❤&r&7]&r"
+death-player-info: "&cPlayer &f&l%player%"
+#
+death-with-ban: "&ce puoi tornare nel server in &f&l%time%" # When a player gets a ban after death
+death-without-ban: "&ce ha perso una delle sue vite" # When a player doesn't get banned after death
+#
+# IMPORTANT! The final death message is composed of 4 elements
+# death-prefix + death-player-info + death-reason + death-with-ban/death-without-ban
+#    prefix      info about player   death reason      death with or without ban
+#
+# IMPORTANT! The message about the cause of death in the ban window looks like this:
+#                           death-player-info + death-reason
+#                           info about player   death reason
+#
+#
+#
+# Reasons for deaths
+# THIS OPTION MAY CONTAIN ERRORS RELATED TO ACCESSING THE KILLER OF THE PLAYER
+death-reason:
+  BLOCK_EXPLOSION: "&fesploso"
+  CONTACT: "&ffu incatenato a morte"
+  DRAGON_BREATH: "&fmorì per il soffio del drago"
+  DROWNING: "&faffogato"
+  ENTITY_ATTACK: "&fè stato ucciso da &l%killer%&r"
+  ENTITY_EXPLOSION: "&fè morto per l'esplosione"
+  FALL: "&fcaduto da un luogo alto"
+  FALLING_BLOCK: "&fè stato bloccato da un blocco che cadeva"
+  FIRE: "&fbruciato vivo"
+  FIRE_TICK: "&fbruciato vivo"
+  FLY_INTO_WALL: "&fvolò contro il muro"
+  FREEZE: "&fcongelato"
+  HOT_FLOOR: "&fscoprì che il pavimento era di lava"
+  LAVA: "&fha provato a nuotare nella lava"
+  LIGHTNING: "&fè stato colpito da un fulmine"
+  MAGIC: "&fè stato ucciso per magia da&l%killer%&r"
+  POISON: "&fè stato avvelenato"
+  PROJECTILE: "&fè stato colpito da &l%killer%&r"
+  SONIC_BOOM: "&fè morto a causa dell'onda d'urto"
+  STARVATION: "&fè morto di fame"
+  SUFFOCATION: "&fè stato murato nel muro"
+  SUICIDE: "&fsi è suicidato"
+  THORNS: "&fè stato ucciso cercando di ferire &l%killer%&r"
+  VOID: "&fè caduto fuori dal mondo"
+  WITHER: "&fè appassito"
+  OTHER: "&fè morto"
+#
+# BLOCK_EXPLOSION   - Death from being in the area where the block explodes.
+# CONTACT           - Death caused when the player touches a block such as a Cactus, Dripstone (Stalagmite), or Berry Bush.
+# DRAGON_BREATH     - Death caused by a fire-breathing dragon.
+# DROWNING          - Death due to lack of air in the water.
+# ENTITY_ATTACK     - Death caused by an attack by another creature (monster / player).
+# ENTITY_EXPLOSION  - Death from being in an area when a creature such as the Creeper explodes.
+# FALL              - Death from falling from a height.
+# FALLING_BLOCK     - Death from hitting a falling block that deals damage.
+# FIRE              - Death caused by direct exposure to fire.
+# FIRE_TICK         - Death from burns from fire.
+# FLY_INTO_WALL     - Death caused by hitting a wall (elytra).
+# FREEZE            - Death due to freezing.
+# HOT_FLOOR         - Death caused when a player steps on Material.MAGMA_BLOCK.
+# LAVA              - Death from direct contact with lava.
+# LIGHTNING         - Death caused by a lightning strike.
+# MAGIC             - Death from being hit by a Damage Potion or spell.
+# POISON            - Death caused by an ongoing poison effect.
+# PROJECTILE        - Death caused by projectile (arrow, etc.).
+# SONIC_BOOM        - Death caused by a Sonic Boom attack from the Guardian.
+# STARVATION        - Death by starvation due to empty hunger bar.
+# SUFFOCATION       - Death by asphyxiation in the wall.
+# SUICIDE           - Suicide.
+# THORNS            - Death caused by retaliation against the Thorns spell attack.
+# VOID              - Death caused by falling outside the world.
+# WITHER            - Death by the effect of the Wither mixture.
+# OTHER             - Death caused by any of the other causes.
+#
+# ___________________________________________________________________________

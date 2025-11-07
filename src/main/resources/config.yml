@@ -1,0 +1,414 @@
+#
+# CC Creative Commons 2025
+# Attribution-NoDerivatives 4.0 International
+# Author olios
+#
+#
+#
+#
+#  _______  ___      __   __  _______  ___   __    _
+# |       ||   |    |  | |  ||       ||   | |  |  | |
+# |    _  ||   |    |  | |  ||    ___||   | |   |_| |
+# |   |_| ||   |    |  |_|  ||   | __ |   | |       |
+# |    ___||   |___ |       ||   ||  ||   | |  _    |
+# |   |    |       ||       ||   |_| ||   | | | |   |
+# |___|    |_______||_______||_______||___| |_|  |__|
+#
+#
+#
+# IMPORTANT!
+# Any changes to this file require the server to be restarted.
+# Removing variables will cause the plugin to malfunction.
+# You can download the original, unmodified files from plugin page.
+# https://www.spigotmc.org/resources/authors/olios123.1116758/
+#
+# *------------------------------------*
+# :        CHECKING FOR UPDATES        :
+# *------------------------------------*
+# You will get a notification when a newer plugin version is released.
+check-updates: true
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :          PLUGIN LANGUAGE           :
+# *------------------------------------*
+# Plugin language.
+# You can create your own .yml language files or edit existing ones.
+language: en
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :                LOGS                :
+# *------------------------------------*
+# The plugin logs will be displayed in green.
+clearer-logs: false
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :          DATABASE (MySQL)          :
+# *------------------------------------*
+# Connect and stores data in a database.
+# The rest of the options are in the database.yml file.
+database: false
+# *------------------------------------*
+#
+#
+#  _______  _______  __    _  _______  ___   _______  __   __  ______    _______  _______  ___   _______  __    _
+# |       ||       ||  |  | ||       ||   | |       ||  | |  ||    _ |  |   _   ||       ||   | |       ||  |  | |
+# |     __||   _   ||   |_| ||    ___||   | |    ___||  | |  ||   | ||  |  |_|  ||_     _||   | |   _   ||   |_| |
+# |    |   |  | |  ||       ||   |___ |   | |   | __ |  |_|  ||   |_||_ |       |  |   |  |   | |  | |  ||       |
+# |    |   |  |_|  ||  _    ||    ___||   | |   ||  ||       ||    __  ||       |  |   |  |   | |  |_|  ||  _    |
+# |    |__ |       || | |   ||   |    |   | |   |_| ||       ||   |  | ||   _   |  |   |  |   | |       || | |   |
+# |_______||_______||_|  |__||___|    |___| |_______||_______||___|  |_||__| |__|  |___|  |___| |_______||_|  |__|
+#
+#
+# If you want to unban a player, enter in chat /pardon [player]
+#
+# *------------------------------------*
+# :              BAN TYPE              :
+# *------------------------------------*
+# The type of ban determines whether the bans should be longer and longer over time, or whether their length should always be the same.
+ban-type: "increasing" # The time of each ban is getting longer and longer.
+#ban-type: "constant" # The time of each ban is the same.
+#
+# This command will be used after the player dies.
+# You can create a list of commands by listing them from dashes.
+# This way you can ban ip or BungeeCord servers.
+# Placeholders:
+# %hardcoremode_player% - player who died
+# %reason% - ban reason
+# %date% - end ban date (timestamp)
+# %time% - ban time in min
+# IMPORTANT! Do not add "/" before the command - the command will not work
+custom-ban-command:
+  enable: false
+  # If you enable this feature, the plugin will execute a command or list of commands instead of using its built-in system.
+  cmd: "ban %hardcoremode_player% %reason% %time%"
+#
+# Commands executed after returning to the server after a ban.
+# The plugin will continue to display information about the next ban time.
+return-command:
+  enable: false
+  # You can write commands starting with dashes, and they will be executed in the given order.
+  cmd:
+    - 'tellraw @a {"text":"&cThe player &l&f%hardcoremode_player% &r&creturned to the server after being banned"}'
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :       CONSTANT CONFIGURATION       :
+# *------------------------------------*
+# Ban time in minutes and seconds.
+# Used when "constant" is selected for "ban-type".
+# You can also set the time in minutes and seconds.
+# For example: 15.5 - the ban will last 15 minutes and 30 seconds.
+# The value after the dot represents the part of the minute.
+ban-time: 15
+#ban-time: 15.5 # 15min 30sec
+#
+# Ban length depends on rank.
+# Used when you have selected "constant" in the "ban-type" section.
+# Enter the length of the ban in minutes.
+# In order for the plugin to recognize that the player has the indicated rank,you need to add permissions with the name of the rank.
+# For example: vip: 15 -> permission "vip".
+# The plugin checks from the highest (the lowest position) to the lowest rank.
+# The plugin requires you to keep the "default" value - don't rename this variable.
+ban-rank-time:
+  enable: false # true - enable / false - disable
+  ranks:
+    default: 15
+    vip: 10
+    mvip: 5
+    admin: 0 # The player will not receive a ban.
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :      INCREASING CONFIGURATION      :
+# *------------------------------------*
+# Ban lengths.
+# Used if "increasing" is selected for the "ban-type" setting.
+# The ban time should be given in minutes.
+# The player will be banned for a longer time after each subsequent death.
+#
+#        1:                 15
+#   death number       time in minutes
+#
+# Another example with seconds: 15.5 - 15 minutes and 30 seconds.
+#
+ban-length:
+  1: 15 # 15min
+  2: 30 # 30min
+  3: 60 # 1h
+  4: 360 # 6h
+  5: 1440 # 24h
+  #1: 15.5 # 15min 30sec
+#
+# Ban length depends on rank.
+# Used if "increasing" is selected for the "ban-type" setting.
+# The player will be banned for a longer time after each subsequent death.
+# In order for the plugin to recognize that the player has the indicated rank, you need to add permissions with the name of the rank.
+# For example: vip: 15 -> permission "vip".
+# Unranked players will be assigned to the default group.
+# The plugin checks from the highest (lowest position) to the lowest rank.
+# The plugin requires you to keep the "default" value - don't rename this variable.
+ban-rank-length:
+  enable: false # true - enable / false - disable
+  ranks:
+    # default
+    default:
+      1: 15 # 15min
+      2: 30 # 30min
+      3: 60 # 1h
+      4: 360 # 6h
+      5: 1440 # 24h
+
+    # vip
+    vip:
+      1: 10 # 10min
+      2: 20 # 20min
+      3: 45 # 45min
+      4: 300 # 5h
+      5: 1200 # 20h
+
+    # mvip
+    mvip:
+      1: 5 # 5min
+      2: 15 # 15min
+      3: 30 # 30min
+      4: 240 # 4h
+      5: 960 # 16h
+
+    # admin
+    admin:
+      1: 0 # The player will not be banned.
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :      BAN LEVEL CONFIGURATION       :
+# *------------------------------------*
+# Reducing the length of the ban.
+# If the player does not die for a long time, his ban will be reduced.
+lowering-ban:
+  enable: true # default true
+  time-without-death: 360 # Time without a ban to lower its level - default 360min (6h) (you can use seconds example. 360.5 - 360min and 30sec).
+  lowered-level: 1 # The amount of how many levels the ban level will decrease.
+  max-ban-level: 5 # Maximum ban level.
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :        LIVES CONFIGURATION         :
+# *------------------------------------*
+# Pre-ban players can have multiple lives.
+# After dying, the player loses a life, and when he has no more lives, he is banned.
+lives:
+  enable: true # true - enable / false - disable
+  #
+  # The player can turn the information about lives on and off.
+  toggle-info: true
+  default-visible: true # Sets whether the player should immediately see their lives or must turn them on with a command.
+  #
+  # The information will be displayed above the player's inventory bar.
+  # The bar can be animated.
+  # Change update frequency is 0.5 seconds.
+  bar-info-enabled: true # Turn the bar on or off
+  bar-info:
+  - "&c> &4> &4>   &c❤ %hardcoremode_lives% &fLives &c❤   &4< &4< &c<"
+  - "&4> &c> &4>   &c❤ %hardcoremode_lives% &fLives &c❤   &4< &c< &4<"
+  - "&4> &4> &c>   &c❤ %hardcoremode_lives% &fLives &c❤   &c< &4< &4<"
+  - "&4> &4> &4>   &c❤ %hardcoremode_lives% &fLives &c❤   &4< &4< &4<"
+  #
+  # Information will appear instead of bar-info when the player has 0 lives.
+  # Will be banned after death.
+  no-lives-info-enabled: true # Turn the bar on or off
+  no-lives-info:
+  - "&c> &4> &4>   &c❤ &4&lBAN AFTER DEATH &r&c❤   &4< &4< &c<"
+  - "&4> &c> &4>   &c❤ &4&lBAN AFTER DEATH &r&c❤   &4< &c< &4<"
+  - "&4> &4> &c>   &c❤ &4&lBAN AFTER DEATH &r&c❤   &c< &4< &4<"
+  - "&4> &4> &4>   &c❤ &4&lBAN AFTER DEATH &r&c❤   &4< &4< &4<"
+  # You can also change the type to display the number of deaths. (%hardcoremode_deaths%)
+  # If you want to use death instead of lives, you also need to change the information in bar-info and no-lives-info to the same.
+  # e.g.
+  # bar-info:
+  # - "&4> &4> &4>   &c❤ &l&fDeaths: &c%hardcoremode_deaths% &c❤   &4< &4< &4<"
+  #
+  # no-lives-info:
+  # - "&4> &4> &4>   &c❤ &l&fDeaths: &c%hardcoremode_deaths% &c❤   &4< &4< &4<"
+  #
+  #
+  # Initial number of lives.
+  default-count: 3
+  #
+  # Maximum number of lives.
+  max-count: 3
+  #
+  # Number of lives after death.
+  # After returning to the server, the player can receive a certain number of lives or for example start with the basic number (default-count).
+  # You can only enter a number here.
+  # Lives are only awarded to the player upon returning to the server after death.
+  after-death: 3 # If 0, the player will have to wait until his life is restored.
+  #
+  # After killing another player, killer will get an extra life.
+  # Lives will not be added if the player has the maximum amount of them.
+  killer-give-live: false
+  #
+  # The player will receive life some time after the last death.
+  # The number of lives added will not be greater than the initial amount.
+  renewing-lives:
+    enable: true # true - enable / false - disable
+    time-without-death: 360 # Time to add one life (default 360min = 6h).
+# *------------------------------------*
+#
+#
+#  _______  ______   __   __  ___   __    _
+# |   _   ||      | |  |_|  ||   | |  |  | |
+# |  |_|  ||  _    ||       ||   | |   |_| |
+# |       || | |   ||       ||   | |       |
+# |       || |_|   ||       ||   | |  _    |
+# |   _   ||       || ||_|| ||   | | | |   |
+# |__| |__||______| |_|   |_||___| |_|  |__|
+#
+#
+# *------------------------------------*
+# :       BANNING ADMINISTRATORS       :
+# *------------------------------------*
+# Do not ban if the player who dies is the administrator (op).
+admin-no-ban-after-death: false
+#
+# Do not ban if the player who dies has this permission.
+# You need to add the "hardcoremode.nodeath" permission to the player.
+# The player will not lose life or be banned after death.
+# *------------------------------------*
+#
+#
+#  _______  _______  __    _  __    _  ___   __    _  _______
+# |  _    ||   _   ||  |  | ||  |  | ||   | |  |  | ||       |
+# | |_|   ||  |_|  ||   |_| ||   |_| ||   | |   |_| ||    ___|
+# |       ||       ||       ||       ||   | |       ||   | __
+# |  _   | |       ||  _    ||  _    ||   | |  _    ||   ||  |
+# | |_|   ||   _   || | |   || | |   ||   | | | |   ||   |_| |
+# |_______||__| |__||_|  |__||_|  |__||___| |_|  |__||_______|
+#
+#
+# *------------------------------------*
+# :            DEATH REASON            :
+# *------------------------------------*
+#
+# THIS OPTION MAY CONTAIN ERRORS RELATED TO ACCESSING THE KILLER OF THE PLAYER.
+#
+# The reasons for the death.
+# For this option to be used it must be turned on.
+# Otherwise the plugin will send a "death-message".
+death-reason-enable: true
+#
+# IMPORTANT! The ban messages are in the language file depending on the selected language of the plugin.
+# *------------------------------------*
+#
+#
+#  _______  _______  _______  _______  _______  _______  _______
+# |       ||       ||       ||       ||       ||       ||       |
+# |    ___||    ___||    ___||    ___||     __||_     _||  _____|
+# |   |___ |   |___ |   |___ |   |___ |    |     |   |  | |_____
+# |    ___||    ___||    ___||    ___||    |     |   |  |_____  |
+# |   |___ |   |    |   |    |   |___ |    |__   |   |   _____| |
+# |_______||___|    |___|    |_______||_______|  |___|  |_______|
+#
+#
+# *------------------------------------*
+# :               VISUAL               :
+# *------------------------------------*
+# When a player dies, show lightning at the place of his death.
+death-lightning: true
+#
+# When the player takes damage, blood particles will appear.
+# The amount of blood depends on the amount of damage taken.
+# Blood will not always appear, e.g. when drowning
+blood: true
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :                NICK                :
+# *------------------------------------*
+# You can display (preferably short) information before the player's nickname.
+# This may be, for example, the number of his lives or the number of his deaths.
+# If you do not want additional information to be shown before the player's nickname, leave this field blank (To apply the changes you must restart the server).
+nick-info: "&c ❤%hardcoremode_lives% | &r"
+#nick-info: "&7 ☠%hardcoremode_deaths% | &r"
+# *------------------------------------*
+#
+#
+#  _______  _______  __   __  _______  ______
+# |       ||       ||  | |  ||       ||    _ |
+# |   _   ||_     _||  |_|  ||    ___||   | ||
+# |  | |  |  |   |  |       ||   |___ |   |_||_
+# |  |_|  |  |   |  |       ||    ___||    __  |
+# |       |  |   |  |   _   ||   |___ |   |  | |
+# |_______|  |___|  |__| |__||_______||___|  |_|
+#
+#
+# *------------------------------------*
+# :              FORMATS               :
+# *------------------------------------*
+# Date and time formats.
+time-format: "HH:mm"
+date-format: "dd.MM.yyyy"
+full-date-format: "HH:mm dd.MM.yyyy"
+# *------------------------------------*
+#
+#
+# *------------------------------------*
+# :            LEADERBOARD             :
+# *------------------------------------*
+# Leaderboard options
+# Specify what the plugin should do if the selected option is empty, e.g. Leaderboard has a size of 10, but there are only 5 players.
+leaderboard-empty: none
+# You can use the following options here:
+# * none - Leaderboard will return an empty string.
+# 1. player1 - 10❤
+# 2. player2 - 7❤
+# 3. player3 - 3❤
+#
+#
+# *---------------*
+# * last - Leaderboard will return the last available leaderboard value.
+# 1. player1 - 10❤
+# 2. player2 - 7❤
+# 3. player3 - 3❤
+# 3. player3 - 3❤
+# 3. player3 - 3❤
+# *---------------*
+# * "some text" - Leaderboard will display the entered text.
+# 1. player1 - 10❤
+# 2. player2 - 7❤
+# 3. player3 - 3❤
+# no value
+# no value
+#
+# Determine the format of the leaderboard appearance for lives.
+# This section uses two placeholders:
+# * %hardcoremode_leaderboard_lives_<size>% - Leaderboard in the scope of a given position.
+# * %hardcoremode_leaderboard_lives_pos_<position>% - A specific position in the leaderboard.
+# Some plugins do not support multiple lines of text, so sometimes it is necessary to refer to each line separately.
+#
+leaderboard-format-lives: "&7%position%. &f%hardcoremode_player% &8- &c%value%❤"
+# Determine the format of the leaderboard appearance for deaths.
+# This section uses two placeholders:
+# * %hardcoremode_leaderboard_deaths_<size>% - Leaderboard in the scope of a given position.
+# * %hardcoremode_leaderboard_deaths_pos_<position>% - A specific position in the leaderboard.
+# Some plugins do not support multiple lines of text, so sometimes it is necessary to refer to each line separately.
+leaderboard-format-deaths: "&7%position%. &f%hardcoremode_player% &8- &7%value%☠"
+#
+# Determine the format of the leaderboard appearance for kills.
+# These placeholders only apply to kills of other players.
+# This section uses two placeholders:
+# * %hardcoremode_leaderboard_kills_<size>% - Leaderboard in the scope of a given position.
+# * %hardcoremode_leaderboard_kills_pos_<position>% - A specific position in the leaderboard.
+# Some plugins do not support multiple lines of text, so sometimes it is necessary to refer to each line separately.
+leaderboard-format-kills: "&7%position%. &f%hardcoremode_player% &8- &4%value%✂"
+# *------------------------------------*
