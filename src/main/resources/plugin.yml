@@ -1,0 +1,46 @@
+name: HardcoreMode
+version: 4.0-BETA
+api-version: 1.13
+prefix: Hardcore Mode
+authors: [ olios ]
+description: Introduces temporary bans for players after death
+
+softdepend: [PlaceholderAPI]
+
+main: me.olios.hardcoremode.Main
+database: false
+
+commands:
+  hardcoremode:
+    description: Access to reloading the plugin and help
+    usage: hardcoremode [about/commands/help/permissions/placeholders/reload]
+    aliases:
+      - hm
+  lives:
+    description: Managing lives and showing information about the number of lives
+    usage: lives [add/set/remove/show/hide/info] [player/all] [amount]
+  unban:
+    description: Unbans the player
+    usage: unban <player>
+
+permissions:
+  hardcoremode.*:
+    default: op
+    description: Access to all Hardcore Mode plugin permissions
+    children:
+      - hardcoremode.reload
+      - hardcoremode.lives
+      - hardcoremode.admin
+      - hardcoremode.unban
+  hardcoremode.reload:
+    default: op
+    description: Reloads plugin configuration (some functions require a server restart)
+  hardcoremode.admin:
+    default: op
+    description: Access to the /hardcoremode command
+  hardcoremode.lives:
+    default: op
+    description: Managing players' lives
+  hardcoremode.unban:
+    default: op
+    description: Access to the /unban command
