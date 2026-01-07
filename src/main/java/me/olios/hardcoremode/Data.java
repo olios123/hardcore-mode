@@ -19,8 +19,8 @@ public class Data {
 	public static int resourceId = 104642;
 	public static String resourceURL = "https://www.spigotmc.org/resources/hardcoremode.104642/";
 	public static String resourceDocs = "https://www.spigotmc.org/resources/hardcoremode.104642//field?field=documentation";
-	public static String version = "4.0-BETA";
-	public static String pluginVersion = "4.0-BETA";
+	public static String version = "4.1-BETA";
+	public static String pluginVersion = "4.1-BETA";
 	public static String discord = "https://discord.gg/kE6eptDu3W";
 	public static boolean canUpdate = false;
 	public static String SSID;

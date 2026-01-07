@@ -6,7 +6,7 @@
 
     <groupId>me.olios.hardcoremode</groupId>
     <artifactId>hardcoremode</artifactId>
-    <version>4.0</version>
+    <version>4.1-BETA</version>
     <packaging>jar</packaging>
 
     <name>hardcoremode</name>
