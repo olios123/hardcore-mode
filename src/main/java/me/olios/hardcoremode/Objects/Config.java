@@ -41,9 +41,6 @@ public class Config {
     public static boolean LIVES_RENEWING_LIVES_ENABLE;
     public static double LIVES_RENEWING_LIVES_TIME_WITHOUT_DEATH;
 
-    // Admin
-    public static boolean ADMIN_NO_BAN_AFTER_DEATH;
-
     // Banning
     public static boolean DEATH_REASON_ENABLE;
 

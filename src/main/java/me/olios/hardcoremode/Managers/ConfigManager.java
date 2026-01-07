@@ -378,9 +378,6 @@ public class ConfigManager {
         config.LIVES_RENEWING_LIVES_ENABLE = cnf.getBoolean("lives.renewing-lives.enable");
         config.LIVES_RENEWING_LIVES_TIME_WITHOUT_DEATH = cnf.getDouble("lives.renewing-lives.time-without-death");
 
-        // Admin
-        config.ADMIN_NO_BAN_AFTER_DEATH = cnf.getBoolean("admin-no-ban-after-death");
-
         // Banning
         config.DEATH_REASON_ENABLE = cnf.getBoolean("death-reason-enable");
 
