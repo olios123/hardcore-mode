@@ -209,10 +209,7 @@ public class MySQL {
     {
         try
         {
-            while (resultSet.next())
-            {
-                return true;
-            }
+            if (resultSet.next()) return true;
             resultSet.close();
         }
         catch (SQLException e)
