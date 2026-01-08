@@ -371,7 +371,7 @@ public class PlayerDeath implements Listener {
 
             // Player didn't lose any live because of plugin configuration
             if (PermissionsManager.checkPermissions(p, Data.Permission.NODEATH) ||
-                    p.isOp() && ConfigManager.config.ADMIN_NO_BAN_AFTER_DEATH)
+                    p.isOp())
             {
                 publicMessage =
                         MessagesManager.getMessage(Data.Message.DEATH_PREFIX, placeholders) + " " +

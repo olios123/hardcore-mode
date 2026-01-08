@@ -21,7 +21,7 @@ public class BanTime {
         UserData userData = UserDataManager.load(uuid);
 
         if (PermissionsManager.checkPermissions(p, Data.Permission.NODEATH)) return 0.0;
-        if (p.isOp() && ConfigManager.config.ADMIN_NO_BAN_AFTER_DEATH) return 0.0;
+        if (p.isOp()) return 0.0;
 
         // Player still has lives
         if (userData.lives - 1 >= 0 && ignoreLives.length == 0)
