@@ -327,6 +327,13 @@ public class PlayerDeath implements Listener {
                     // Get ban length from function
                     BanTime.foundBanLength(ConfigManager.config.BAN_LENGTH, userData);
                 }
+
+                // Ban level increasing
+                if (userData.deathLevel < ConfigManager.config.LOWERING_BAN_MAX_BAN_LEVEL)
+                {
+                    userData.deathLevel += 1;
+                    UserDataManager.save(userData);
+                }
             }
 
             // Custom death message
@@ -348,12 +355,6 @@ public class PlayerDeath implements Listener {
 
                 e.setDeathMessage(publicMessage);
 //                Bukkit.broadcastMessage(publicMessage);
-            }
-
-            if (userData.deathLevel < ConfigManager.config.LOWERING_BAN_MAX_BAN_LEVEL)
-            {
-                userData.deathLevel += 1;
-                UserDataManager.save(userData);
             }
 
             userData = UserDataManager.load(uuid);
