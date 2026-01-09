@@ -137,6 +137,7 @@ public class Data {
 		ADMIN,
 		RELOAD,
 		NODEATH,
+		DEATH,
 		LIVES,
 		UNBAN
 	}

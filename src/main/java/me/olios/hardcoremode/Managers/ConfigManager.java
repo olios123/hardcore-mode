@@ -380,6 +380,8 @@ public class ConfigManager {
 
         // Banning
         config.DEATH_REASON_ENABLE = cnf.getBoolean("death-reason-enable");
+        config.ALLOW_BAN_OP = cnf.getBoolean("allow-ban-op");
+        config.BAN_PERMISSION = cnf.getString("ban-permission");
 
         // Effects
         config.DEATH_LIGHTNING = cnf.getBoolean("death-lightning");

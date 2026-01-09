@@ -43,6 +43,8 @@ public class Config {
 
     // Banning
     public static boolean DEATH_REASON_ENABLE;
+    public static boolean ALLOW_BAN_OP;
+    public static String BAN_PERMISSION;
 
     // Effects
     public static boolean DEATH_LIGHTNING;
