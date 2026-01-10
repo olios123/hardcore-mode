@@ -1,6 +1,7 @@
 package me.olios.hardcoremode.API;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.olios.hardcoremode.Data;
 import me.olios.hardcoremode.Librrary.BanTime;
 import me.olios.hardcoremode.Librrary.ConvertTime;
 import me.olios.hardcoremode.Librrary.Numeric;
@@ -43,7 +44,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @Override
     public String getVersion()
     {
-        return "1.1.0";
+        return Data.pluginVersion;
     }
 
     @Override
@@ -175,10 +176,11 @@ public class PAPIExpansion extends PlaceholderExpansion {
 
             case "next-ban-time":
                 if (!offlinePlayer.isOnline()) return "???";
-                return ConvertTime.convertTime(BanTime.get(
-                        Bukkit.getPlayer(UUID.fromString(uuid)), false, true)).time;
+                BanTime.BanResult banResult = BanTime.calculate(Bukkit.getPlayer(UUID.fromString(uuid)), false, true);
+                return ConvertTime.convertTime(banResult.getBanTime()).time;
 
             case "lives":
+                if (!ConfigManager.config.LIVES_ENABLE) return "DISABLED";
                 return String.valueOf(userData.lives);
 
             case "kills":
@@ -325,8 +327,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     currentDeathPos++;
                 }
                 break;
-
-                // TODO problem - nie zawsze zamienia placeholdery gracza
 
             case "KILLS":
                 Map<OfflinePlayer, Integer> killsMap = new HashMap<>();
