@@ -75,8 +75,8 @@ public class MessagesManager {
         Object msg = languageYml.get(message.toString().toLowerCase().replace("_", "-"));
         Map<String, Object> placeholders = PAPICustom.getStaticPlaceholders();
 
-        // Add additional placeholders if given
-        additionalPlaceholders.forEach(placeholders::putIfAbsent);
+        // Add additional placeholders if given (allow to overwrite)
+        placeholders.putAll(additionalPlaceholders);
 
         // Message is list
         if (msg instanceof List<?>)
