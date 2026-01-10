@@ -197,7 +197,7 @@ death-without-ban: "&cand lost one of his lives" # When a player doesn't get ban
 # THIS OPTION MAY CONTAIN ERRORS RELATED TO ACCESSING THE KILLER OF THE PLAYER
 death-reason:
   BLOCK_EXPLOSION: "&fexploded"
-  CONTACT: "&fwas chained to death"
+  CONTACT: "&fwas pricked to death"
   DRAGON_BREATH: "&fdied from the breath of the dragon"
   DROWNING: "&fdrowned"
   ENTITY_ATTACK: "&fwas killed by &l%killer%&r"
