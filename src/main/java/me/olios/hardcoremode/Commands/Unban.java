@@ -13,6 +13,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.profile.PlayerProfile;
 
+import java.util.UUID;
+
 public class Unban extends CommandAction {
 
     private static final ProfileBanList banList = Bukkit.getBanList(BanList.Type.PROFILE);
@@ -24,8 +26,8 @@ public class Unban extends CommandAction {
     @Override
     public void cmd(CommandSender sender, Command cmd, String label, String[] args)
     {
-        PlayerProfile bannedPlayer = getBannedPlayer(args[0]);
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+        PlayerProfile bannedPlayer = getBannedPlayer(String.valueOf(offlinePlayer.getUniqueId()));
 
         // Player not found
         if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore())
@@ -48,10 +50,10 @@ public class Unban extends CommandAction {
         MessagesManager.sendMessageSender(sender, Data.Message.CMD_UNBANNED);
     }
 
-    private static PlayerProfile getBannedPlayer(String name)
+    private static PlayerProfile getBannedPlayer(String uuid)
     {
         return banList.getEntries().stream()
-                .filter(entry -> entry.equals(name))
+                .filter(entry -> entry.getBanTarget().getUniqueId().toString().equals(uuid))
                 .map(BanEntry::getBanTarget)
                 .findFirst()
                 .orElse(null);
