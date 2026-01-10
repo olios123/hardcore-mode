@@ -47,7 +47,13 @@ public class Lives extends CommandAction {
 
             UserData userData = UserDataManager.load(p.getUniqueId().toString());
 
-            MessagesManager.sendMessage(p, Data.Message.CMD_LIVES);
+            Map<String, Object> additionalPlaceholders = new HashMap<>();
+            if (!ConfigManager.config.LIVES_ENABLE)
+            {
+                additionalPlaceholders.put("%hardcoremode_lives%", "DISABLED");
+            }
+
+            MessagesManager.sendMessage(p, Data.Message.CMD_LIVES, additionalPlaceholders);
 
             if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE ||
                     ConfigManager.config.LOWERING_BAN_ENABLE) p.sendMessage("");
