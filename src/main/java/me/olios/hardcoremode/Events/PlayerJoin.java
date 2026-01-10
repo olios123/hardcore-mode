@@ -40,8 +40,9 @@ public class PlayerJoin implements Listener {
 
 		UserData userData = UserDataManager.load(p.getUniqueId().toString());
 		if (userData == null) return;
-		double banTime = BanTime.get(p, false);
+		BanTime.BanResult banResult = BanTime.calculate(p, false);
 
+		// Update info for OP
 		if (Data.canUpdate && p.isOp()) MessagesManager.sendUpdateInfo(p);
 
 		if (ConfigManager.config.LIVES_ENABLE && userData.lives > 0)
@@ -53,7 +54,7 @@ public class PlayerJoin implements Listener {
 		if (userData.lastBan)
 		{
 			Map<String, Object> placeholders = new HashMap<>();
-			placeholders.put("%time%", ConvertTime.convertTime(banTime).time);
+			placeholders.put("%time%", ConvertTime.convertTime(banResult.getBanTime()).time);
 
 			MessagesManager.sendMessage(p, Data.Message.NEXT_DEATH_INFO_MESSAGE, placeholders);
 
