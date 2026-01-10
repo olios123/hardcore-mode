@@ -17,6 +17,7 @@ import me.olios.hardcoremode.Managers.PermissionsManager;
 import me.olios.hardcoremode.Managers.UserDataManager;
 import me.olios.hardcoremode.Objects.Cache;
 import me.olios.hardcoremode.Objects.UserData;
+import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,6 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -70,55 +72,11 @@ public class PlayerDeath implements Listener {
         }
         else killer = "Unknown";
 
-
         // Clear bleeding
-        for (String key : EntityDamage.playerBleedingMap.keySet())
-        {
-            if (!key.equals(uuid)) continue;
-
-            List<Integer> values = EntityDamage.playerBleedingMap.get(key);
-
-            for (Integer v : values)
-            {
-                BukkitTask taskToCancel = Bukkit.getScheduler().getPendingTasks()
-                        .stream()
-                        .filter(task -> task.getTaskId() == v)
-                        .findFirst()
-                        .orElse(null);
-
-                EntityDamage.cancelBleedingTask(taskToCancel);
-            }
-        }
-        EntityDamage.playerBleedingMap.removeAll(uuid);
-
+        clearBleeding(uuid);
 
         // Giving killer live
-        if (ConfigManager.config.LIVES_ENABLE && ConfigManager.config.LIVES_KILLER_GIVE_LIVE)
-        {
-            if (p.getKiller() != null)
-            {
-                Player killerPlayer = (Player) p.getKiller();
-
-                UserData userData = UserDataManager.load(killerPlayer.getUniqueId().toString());
-                if (userData.lives >= ConfigManager.config.LIVES_MAX_COUNT) // Killer max lives
-                {
-                    MessagesManager.sendMessage(killerPlayer,
-                            Data.Message.TAKEOVER_LIVE_MAX,
-                            p);
-                }
-                else
-                {
-                    userData.lives += 1;
-
-                    UserDataManager.save(userData);
-
-                    MessagesManager.sendMessage(killerPlayer,
-                            Data.Message.TAKEOVER_LIVE,
-                            p);
-                }
-            }
-        }
-
+        giveKillerLive(p);
 
         // Death message
         String deathMsg = e.getDeathMessage();
@@ -129,7 +87,7 @@ public class PlayerDeath implements Listener {
         Data.DeathReason dReason = Data.getDeathReason(deathReason);
 
         // Ban time
-        Double banTime = BanTime.get(p, true);
+        BanTime.BanResult banResult = BanTime.calculate(p, true);
 
         UserData userData = UserDataManager.load(p.getUniqueId().toString());
 
@@ -149,9 +107,12 @@ public class PlayerDeath implements Listener {
         // MYSQL Variables
 
         // Settings from config
-        if (ConfigManager.config.DEATH_REASON_ENABLE) e.setDeathMessage(null);
-        if (ConfigManager.config.DEATH_LIGHTNING)
+        if (ConfigManager.config.DEATH_REASON_ENABLE) {
+            e.setDeathMessage(null);
+        }
+        if (ConfigManager.config.DEATH_LIGHTNING) {
             p.getWorld().strikeLightningEffect(p.getLocation());
+        }
 
         // Lives and renewing
         if (ConfigManager.config.LIVES_ENABLE && ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE)
@@ -179,14 +140,14 @@ public class PlayerDeath implements Listener {
             Bukkit.getScheduler().cancelTask(Data.tasksRenewingLives.get(uuid));
 
         // Ban player
-        if (banTime > 0)
+        if (banResult.getBanTime() > 0)
         {
             MYSQL_banned = true;
-            MYSQL_banTime = banTime;
+            MYSQL_banTime = banResult.getBanTime();
 
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MINUTE, banTime.intValue());
-            calendar.add(Calendar.SECOND, ConvertTime.secTime(banTime));
+            calendar.add(Calendar.MINUTE, (int) banResult.getBanTime());
+            calendar.add(Calendar.SECOND, ConvertTime.secTime(banResult.getBanTime()));
             Date date = calendar.getTime();
 
             // Formats
@@ -196,7 +157,7 @@ public class PlayerDeath implements Listener {
 
             // Reason
             Map<String, Object> placeholders = new HashMap<>();
-            placeholders.put("%time%", ConvertTime.convertTime(banTime).time);
+            placeholders.put("%time%", ConvertTime.convertTime(banResult.getBanTime()).time);
             placeholders.put("%date%", sdfDate.format(date));
             placeholders.put("%full-date%", sdfFullDate.format(date));
 
@@ -238,7 +199,7 @@ public class PlayerDeath implements Listener {
                 placeholders.clear();
                 placeholders.put("%reason%", deathBanReason);
                 placeholders.put("%date%", date.getTime() / 1000);
-                placeholders.put("%time%", ConvertTime.min(banTime).replace("min", ""));
+                placeholders.put("%time%", ConvertTime.min(banResult.getBanTime()).replace("min", ""));
 
                 // Only one command
                 if (ConfigManager.config.CUSTOM_BAN_COMMAND_CMD instanceof String)
@@ -267,11 +228,7 @@ public class PlayerDeath implements Listener {
             else
             {
                 // Ban player
-                Bukkit.getBanList(BanList.Type.NAME).addBan(
-                        p.getName(),
-                        finalReason,
-                        date,
-                        null);
+                p.ban(finalReason, date, null, false);
                 Data.kickList.add(uuid);
 
                 // Kick player
@@ -290,51 +247,7 @@ public class PlayerDeath implements Listener {
             UserDataManager.save(userData);
 
             // Add ban level
-            if (ConfigManager.config.BAN_TYPE.equals("increasing"))
-            {
-                // Ban time is baned on rank
-                if (ConfigManager.config.BAN_RANK_TIME_ENABLE)
-                {
-                    // If player doesn't have any permission from the list
-                    boolean permissionFound = false;
-
-                    for (Map.Entry<String, SortedMap<Integer, Double>> entry : ConfigManager.config.BAN_RANK_LENGTH_RANKS.entrySet())
-                    {
-                        String rank = entry.getKey();
-                        SortedMap<Integer, Double> rankBanLength = entry.getValue();
-
-                        // Check if player has permission
-                        if (p.hasPermission(rank))
-                        {
-                            permissionFound = true;
-
-                            // Get ban length from function
-                            BanTime.foundBanLength(rankBanLength, userData);
-                        }
-                    }
-
-                    // Player doesn't have any permission from the list
-                    if (!permissionFound)
-                    {
-                        SortedMap<Integer, Double> defaultBans = ConfigManager.config.BAN_RANK_LENGTH_RANKS.get("default");
-
-                        // Get ban length from function
-                        BanTime.foundBanLength(defaultBans, userData);
-                    }
-                }
-                else // Ban time is always the same for every player
-                {
-                    // Get ban length from function
-                    BanTime.foundBanLength(ConfigManager.config.BAN_LENGTH, userData);
-                }
-
-                // Ban level increasing
-                if (userData.deathLevel < ConfigManager.config.LOWERING_BAN_MAX_BAN_LEVEL)
-                {
-                    userData.deathLevel += 1;
-                    UserDataManager.save(userData);
-                }
-            }
+            addBanLevel(p, userData);
 
             // Custom death message
             if (ConfigManager.config.DEATH_REASON_ENABLE)
@@ -343,7 +256,7 @@ public class PlayerDeath implements Listener {
                 placeholders.clear();
                 placeholders.put("%player%", p.getName());
                 placeholders.put("%killer%", killer);
-                placeholders.put("%time%", ConvertTime.convertTime(banTime).time);
+                placeholders.put("%time%", ConvertTime.convertTime(banResult.getBanTime()).time);
                 placeholders.put("%date%", sdfDate.format(date));
                 placeholders.put("%full-date%", sdfFullDate.format(date));
 
@@ -370,16 +283,8 @@ public class PlayerDeath implements Listener {
 
             String publicMessage = "";
 
-            // Player didn't lose any live because of plugin configuration
-            if (PermissionsManager.checkPermissions(p, Data.Permission.NODEATH) ||
-                    p.isOp())
-            {
-                publicMessage =
-                        MessagesManager.getMessage(Data.Message.DEATH_PREFIX, placeholders) + " " +
-                        MessagesManager.getMessage(Data.Message.DEATH_PLAYER_INFO, p,placeholders) + " " +
-                        MessagesManager.getDeathMessage(dReason, placeholders);
-            }
-            else
+            // Player didn't lose any live
+            if (banResult.isLostLive())
             {
                 publicMessage =
                         MessagesManager.getMessage(Data.Message.DEATH_PREFIX, placeholders) + " " +
@@ -387,28 +292,20 @@ public class PlayerDeath implements Listener {
                         MessagesManager.getDeathMessage(dReason, placeholders) + " " +
                         MessagesManager.getMessage(Data.Message.DEATH_WITHOUT_BAN, placeholders);
             }
+            else
+            {
+                publicMessage =
+                        MessagesManager.getMessage(Data.Message.DEATH_PREFIX, placeholders) + " " +
+                        MessagesManager.getMessage(Data.Message.DEATH_PLAYER_INFO, p,placeholders) + " " +
+                        MessagesManager.getDeathMessage(dReason, placeholders);
+            }
 
             e.setDeathMessage(publicMessage);
 //            Bukkit.broadcastMessage(publicMessage);
         }
 
         // Lowering bans
-        if (ConfigManager.config.LOWERING_BAN_ENABLE)
-        {
-            int timestamp = (int) (new Date().getTime()/1000);
-            int timeWithoutDeath = (int) (ConfigManager.config.LOWERING_BAN_TIME_WITHOUT_DEATH * 60);
-
-            Map<String, Integer> map = Cache.loweringBans;
-
-            if (map.containsKey(uuid))
-                map.replace(uuid, map.get(uuid), (timestamp + timeWithoutDeath));
-            else
-                map.put(uuid, (timestamp + timeWithoutDeath));
-
-            Cache.loweringBans = map;
-
-//            Data.saveLoweringBans(map);
-        }
+        loweringBans(uuid);
 
         // MYSQL
         if (MySQL.isConnected)
@@ -471,5 +368,118 @@ public class PlayerDeath implements Listener {
             damager = entityEvent.getDamager();
         }
         return damager;
+    }
+
+    private void clearBleeding(String uuid) {
+        for (String key : EntityDamage.playerBleedingMap.keySet())
+        {
+            if (!key.equals(uuid)) continue;
+
+            List<Integer> values = EntityDamage.playerBleedingMap.get(key);
+
+            for (Integer v : values)
+            {
+                BukkitTask taskToCancel = Bukkit.getScheduler().getPendingTasks()
+                        .stream()
+                        .filter(task -> task.getTaskId() == v)
+                        .findFirst()
+                        .orElse(null);
+
+                EntityDamage.cancelBleedingTask(taskToCancel);
+            }
+        }
+        EntityDamage.playerBleedingMap.removeAll(uuid);
+    }
+
+    private void giveKillerLive(Player p) {
+        if (ConfigManager.config.LIVES_ENABLE && ConfigManager.config.LIVES_KILLER_GIVE_LIVE)
+        {
+            if (p.getKiller() != null)
+            {
+                Player killerPlayer = (Player) p.getKiller();
+
+                UserData userData = UserDataManager.load(killerPlayer.getUniqueId().toString());
+                if (userData.lives >= ConfigManager.config.LIVES_MAX_COUNT) // Killer max lives
+                {
+                    MessagesManager.sendMessage(killerPlayer,
+                            Data.Message.TAKEOVER_LIVE_MAX,
+                            p);
+                }
+                else
+                {
+                    userData.lives += 1;
+
+                    UserDataManager.save(userData);
+
+                    MessagesManager.sendMessage(killerPlayer,
+                            Data.Message.TAKEOVER_LIVE,
+                            p);
+                }
+            }
+        }
+    }
+
+    private void addBanLevel(Player p, UserData userData) {
+        if (!ConfigManager.config.BAN_TYPE.equals("increasing")) return;
+
+        // Ban time is baned on rank
+        if (ConfigManager.config.BAN_RANK_TIME_ENABLE)
+        {
+            // If player doesn't have any permission from the list
+            boolean permissionFound = false;
+
+            for (Map.Entry<String, SortedMap<Integer, Double>> entry : ConfigManager.config.BAN_RANK_LENGTH_RANKS.entrySet())
+            {
+                String rank = entry.getKey();
+                SortedMap<Integer, Double> rankBanLength = entry.getValue();
+
+                // Check if player has permission
+                if (p.hasPermission(rank))
+                {
+                    permissionFound = true;
+
+                    // Get ban length from function
+                    BanTime.foundBanLength(rankBanLength, userData);
+                }
+            }
+
+            // Player doesn't have any permission from the list
+            if (!permissionFound)
+            {
+                SortedMap<Integer, Double> defaultBans = ConfigManager.config.BAN_RANK_LENGTH_RANKS.get("default");
+
+                // Get ban length from function
+                BanTime.foundBanLength(defaultBans, userData);
+            }
+        }
+        else // Ban time is always the same for every player
+        {
+            // Get ban length from function
+            BanTime.foundBanLength(ConfigManager.config.BAN_LENGTH, userData);
+        }
+
+        // Ban level increasing
+        if (userData.deathLevel < ConfigManager.config.LOWERING_BAN_MAX_BAN_LEVEL)
+        {
+            userData.deathLevel += 1;
+            UserDataManager.save(userData);
+        }
+    }
+
+    private void loweringBans(String uuid) {
+        if (!ConfigManager.config.LOWERING_BAN_ENABLE) return;
+
+        int timestamp = (int) (new Date().getTime()/1000);
+        int timeWithoutDeath = (int) (ConfigManager.config.LOWERING_BAN_TIME_WITHOUT_DEATH * 60);
+
+        Map<String, Integer> map = Cache.loweringBans;
+
+        if (map.containsKey(uuid))
+            map.replace(uuid, map.get(uuid), (timestamp + timeWithoutDeath));
+        else
+            map.put(uuid, (timestamp + timeWithoutDeath));
+
+        Cache.loweringBans = map;
+//            Data.saveLoweringBans(map);
     }
 }
