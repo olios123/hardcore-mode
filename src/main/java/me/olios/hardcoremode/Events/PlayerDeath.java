@@ -11,11 +11,14 @@ import me.olios.hardcoremode.Database.MySQL;
 import me.olios.hardcoremode.Librrary.BanTime;
 import me.olios.hardcoremode.Librrary.ConvertTime;
 import me.olios.hardcoremode.Librrary.Replace.StringReplace;
+import me.olios.hardcoremode.Main;
 import me.olios.hardcoremode.Managers.ConfigManager;
 import me.olios.hardcoremode.Managers.MessagesManager;
 import me.olios.hardcoremode.Managers.PermissionsManager;
 import me.olios.hardcoremode.Managers.UserDataManager;
 import me.olios.hardcoremode.Objects.Cache;
+import me.olios.hardcoremode.Objects.Config;
+import me.olios.hardcoremode.Objects.DamageCategories;
 import me.olios.hardcoremode.Objects.UserData;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
@@ -23,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -62,6 +66,42 @@ public class PlayerDeath implements Listener {
         Entity damager = getEntityDamager(entityDamageEvent);
         String killer = "";
 
+        // Clear bleeding
+        clearBleeding(uuid);
+
+        // Plugin response logic - stop rest of the code
+        switch (DamageCategories.DAMAGE_CATEGORIES.get(damageCause)) {
+            // Entity and player
+            case ENTITY: {
+                if (damager == null) break;
+
+                // Killing by player is disabled
+                if (damager.getType().equals(EntityType.PLAYER) &&
+                        !Config.PLUGIN_DEATH_RESPONSE.contains(Config.PluginDeathResponse.PLAYER)) return;
+
+                // Killing by entity is disabled
+                if (!damager.getType().equals(EntityType.PLAYER) &&
+                        !Config.PLUGIN_DEATH_RESPONSE.contains(Config.PluginDeathResponse.ENTITY)) return;
+
+                break;
+            }
+            case ENVIRONMENT: {
+                // Killing by environment is disabled
+                if (!Config.PLUGIN_DEATH_RESPONSE.contains(Config.PluginDeathResponse.ENVIRONMENT)) return;
+                break;
+            }
+            case OTHER: {
+                // Killing by other is disabled
+                if (!Config.PLUGIN_DEATH_RESPONSE.contains(Config.PluginDeathResponse.OTHER)) return;
+                break;
+            }
+            case VOID: {
+                // Killing by void is disabled
+                if (!Config.PLUGIN_DEATH_RESPONSE.contains(Config.PluginDeathResponse.VOID)) return;
+                break;
+            }
+        }
+
         // Player
         if (killerEntity != null) killer = killerEntity.getName();
         // Damage by mob
@@ -71,9 +111,6 @@ public class PlayerDeath implements Listener {
             killer = mobType.substring(0, 1).toUpperCase() + mobType.substring(1);
         }
         else killer = "Unknown";
-
-        // Clear bleeding
-        clearBleeding(uuid);
 
         // Giving killer live
         giveKillerLive(p);

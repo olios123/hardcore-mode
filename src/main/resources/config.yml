@@ -65,8 +65,21 @@ database: false
 # |_______||_______||_|  |__||___|    |___| |_______||_______||___|  |_||__| |__|  |___|  |___| |_______||_|  |__|
 #
 #
-# If you want to unban a player, enter in chat /pardon [player]
+# If you want to unban a player, enter in chat /unban <player>
 #
+# *------------------------------------*
+# :          PLUGIN RESPONSE           :
+# *------------------------------------*
+# Here you can specify in which cases after player death the plugin will work (taking lives and banning players).
+# All corresponding values can be found in the plugin documentation at spigotmc.org
+# Comment out unnecessary values.
+# Adding other values will not work.
+plugin-death-response:
+  - player # death caused by another player
+  - entity # death caused by living beings (passive and aggressive)
+  - environment # lava, fire, water, ice, fall from a height etc.
+  - void # player fell into the void
+  - other # all other reason of death
 # *------------------------------------*
 # :              BAN TYPE              :
 # *------------------------------------*
@@ -284,12 +297,17 @@ lives:
 # For this option to be used it must be turned on.
 # Otherwise the plugin will send a "death-message".
 death-reason-enable: true
-#
 # IMPORTANT! The ban messages are in the language file depending on the selected language of the plugin.
+#
+# Server operator can be banned.
+allow-ban-op: false
 # *------------------------------------*
-# Do not ban if the player who dies has this permission.
-# You need to add the "hardcoremode.nodeath" permission to the player.
-# The player will not lose life or be banned after death.
+# You need to add the permission to the player.
+# "nodeath" - ban players without permission "hardcoremode.nodeath"
+# "death" - ban only players with permission "hardcoremode.death"
+# WARNING! Possible conflict with "allow-ban-op", recommended setting "allow-ban-op" to false
+# Due to the fact that the OP always has all permissions, the plugin may reach incorrect conclusions whether the person should be banned.
+ban-permission: "nodeath" # nodeath / death / disabled
 # *------------------------------------*
 #
 #

@@ -14,10 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ConfigManager {
 
@@ -318,6 +315,13 @@ public class ConfigManager {
         config.DATABASE = cnf.getBoolean("database");
 
         // Configuration
+        List<Config.PluginDeathResponse> deathResponses = new ArrayList<>();
+        for (String str : cnf.getStringList("plugin-death-response")) {
+            if (Config.PluginDeathResponse.isValidEnum(str)) {
+                deathResponses.add(Config.PluginDeathResponse.fromString(str));
+            }
+        }
+        config.PLUGIN_DEATH_RESPONSE = deathResponses;
         config.BAN_TYPE = cnf.getString("ban-type");
         config.CUSTOM_BAN_COMMAND_ENABLE = cnf.getBoolean("custom-ban-command.enable");
         config.CUSTOM_BAN_COMMAND_CMD = cnf.get("custom-ban-command.cmd");
