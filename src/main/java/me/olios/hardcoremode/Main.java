@@ -48,19 +48,19 @@ public final class Main extends JavaPlugin implements Listener {
     public static void log(String msg) {
         if (FilesManager.getConfigYml().getBoolean("clearer-logs"))
         {
-            Bukkit.getConsoleSender().sendMessage(ANSI_GREEN + "[HardcoreMode | INFO] " + msg);
+            Bukkit.getConsoleSender().sendMessage(ANSI_GREEN + "[HardcoreMode] " + msg);
             return;
         }
 
-        Bukkit.getConsoleSender().sendMessage("[HardcoreMode | INFO] " + msg);
+        Bukkit.getConsoleSender().sendMessage("[HardcoreMode] " + msg);
     }
     public static void errLog(String msg)
     {
-        Bukkit.getConsoleSender().sendMessage(ANSI_RED + "[HardcoreMode | ERROR] " + msg);
+        Bukkit.getConsoleSender().sendMessage(ANSI_RED + "[HardcoreMode] " + msg);
     }
     public static void warnLog(String msg)
     {
-        Bukkit.getConsoleSender().sendMessage(ANSI_YELLOW + "[HardcoreMode | WARN] " + msg);
+        Bukkit.getConsoleSender().sendMessage(ANSI_YELLOW + "[HardcoreMode] " + msg);
     }
 
     @Override
@@ -165,14 +165,14 @@ public final class Main extends JavaPlugin implements Listener {
             });
         }
 
+
+
         Main.log("");
-        Main.log(ANSI_RED + "   ##  #######  " + ANSI_RESET + "|");
-        Main.log(ANSI_RED + "  ##  ##     ## " + ANSI_RESET + "|");
-        Main.log(ANSI_RED + " ##          ## " + ANSI_RESET + "| Version: " + ANSI_GREEN + Data.pluginVersion);
-        Main.log(ANSI_RED + "##     #######  " + ANSI_RESET + "| SSID: " + ANSI_GREEN + Data.SSID);
-        Main.log(ANSI_RED + " ##          ## " + ANSI_RESET + "| Server: " + ANSI_GREEN + Bukkit.getServer().getBukkitVersion());
-        Main.log(ANSI_RED + "  ##  ##     ## " + ANSI_RESET + "|");
-        Main.log(ANSI_RED + "   ##  #######  " + ANSI_RESET + "|");
+        Main.log(ANSI_RED + "  ####   ####   " + ANSI_RESET + "|");
+        Main.log(ANSI_RED + " ###### ######  " + ANSI_RESET + "| Version: " + ANSI_GREEN + Data.pluginVersion);
+        Main.log(ANSI_RED + "  ###########   " + ANSI_RESET + "| SSID: " + ANSI_GREEN + Data.SSID);
+        Main.log(ANSI_RED + "   #########    " + ANSI_RESET + "| Server: " + ANSI_GREEN + Bukkit.getServer().getBukkitVersion());
+        Main.log(ANSI_RED + "     #####      " + ANSI_RESET);
         Main.log("");
 
         // Some variables are missing
