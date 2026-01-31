@@ -9,6 +9,7 @@ package me.olios.hardcoremode.Events;
 import me.olios.hardcoremode.Data;
 import me.olios.hardcoremode.Librrary.BanTime;
 import me.olios.hardcoremode.Librrary.ConvertTime;
+import me.olios.hardcoremode.Librrary.NickUpdater;
 import me.olios.hardcoremode.Librrary.Replace.ListReplace;
 import me.olios.hardcoremode.Librrary.Replace.StringReplace;
 import me.olios.hardcoremode.Managers.ConfigManager;
@@ -43,7 +44,7 @@ public class PlayerJoin implements Listener {
 		BanTime.BanResult banResult = BanTime.calculate(p, false);
 
 		// Update info for OP
-		if (Data.canUpdate && p.isOp()) MessagesManager.sendUpdateInfo(p);
+		sendUpdateInfo(p);
 
 		if (ConfigManager.config.LIVES_ENABLE && userData.lives > 0)
 		{
@@ -58,7 +59,8 @@ public class PlayerJoin implements Listener {
 
 			MessagesManager.sendMessage(p, Data.Message.NEXT_DEATH_INFO_MESSAGE, placeholders);
 
-			if (ConfigManager.config.LIVES_AFTER_DEATH > 0)
+			// Assign lives after death (lives enabled)
+			if (ConfigManager.config.LIVES_ENABLE && ConfigManager.config.LIVES_AFTER_DEATH > 0)
 			{
 				userData.lives = ConfigManager.config.LIVES_AFTER_DEATH;
 			}
@@ -98,15 +100,12 @@ public class PlayerJoin implements Listener {
 		// Nick prefix
 		if (!ConfigManager.config.NICK_INFO.isEmpty())
 		{
-			String prefix = StringReplace.string(ConfigManager.config.NICK_INFO, p);
-
-			Scoreboard scoreboard = p.getScoreboard();
-			Team team = scoreboard.getTeam("hardcoremode:" + prefix);
-			if (team == null) team = scoreboard.registerNewTeam("hardcoremode:" + prefix);
-
-			team.setPrefix(prefix);
-
-			team.addEntry(p.getName());
+			NickUpdater.updateNick(p);
 		}
+	}
+
+	private static void sendUpdateInfo(Player p)
+	{
+		if (Data.canUpdate && p.isOp()) MessagesManager.sendUpdateInfo(p);
 	}
 }

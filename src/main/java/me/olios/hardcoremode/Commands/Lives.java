@@ -45,8 +45,6 @@ public class Lives extends CommandAction {
             p.recalculatePermissions(); // Refresh permissions
             String uuid = p.getUniqueId().toString();
 
-            UserData userData = UserDataManager.load(p.getUniqueId().toString());
-
             Map<String, Object> additionalPlaceholders = new HashMap<>();
             if (!ConfigManager.config.LIVES_ENABLE)
             {
@@ -55,8 +53,12 @@ public class Lives extends CommandAction {
 
             MessagesManager.sendMessage(p, Data.Message.CMD_LIVES, additionalPlaceholders);
 
-            if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE ||
-                    ConfigManager.config.LOWERING_BAN_ENABLE) p.sendMessage("");
+            if (ConfigManager.config.LIVES_ENABLE && (
+                    ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE ||
+                    ConfigManager.config.LOWERING_BAN_ENABLE)
+            ) {
+                p.sendMessage("");
+            }
 
             // If renewing lives is enabled
             if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE)

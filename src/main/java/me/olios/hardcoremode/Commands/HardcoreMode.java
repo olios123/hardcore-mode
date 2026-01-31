@@ -49,7 +49,7 @@ public class HardcoreMode extends CommandAction {
 		// Default help
 		if (args.length == 0 || args[0].equals("help"))
 		{
-			Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.pluginVersion + "&c)"));
+			Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.version + "&c)"));
 			Main.log(StringReplace.string("&fAuthor: &colios"));
 			Main.log(StringReplace.string("&fCommands: &c/hardcoremode commands"));
 			Main.log(StringReplace.string("&fAbout: &c/hardcoremode about"));
@@ -122,7 +122,7 @@ public class HardcoreMode extends CommandAction {
 	private void cmdPlayer(Player p, Command cmd, String label, String[] args)
 	{
 		if (args.length == 0 || args[0].equals("help")) {
-			p.sendMessage(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.pluginVersion + "&c)"));
+			p.sendMessage(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.version + "&c)"));
 			p.sendMessage(StringReplace.string("&fAuthor: &colios"));
 
 			TextCreator commands = new TextCreator("/hardcoremode commands");
@@ -278,7 +278,7 @@ public class HardcoreMode extends CommandAction {
 				p.sendMessage(StringReplace.string("&8───── &c❤ &4Hardcore&cMode &c❤ &8─────"));
 				p.spigot().sendMessage(
 						new TextComponent(StringReplace.string("&fDeveloper &8⏵ &colios\n")),
-						new TextComponent(StringReplace.string("&fVersion &8⏵ &c" + Data.pluginVersion + "\n")),
+						new TextComponent(StringReplace.string("&fVersion &8⏵ &c" + Data.version + "\n")),
 						new TextComponent(StringReplace.string("&fUpdate? &8⏵ &c" + Data.canUpdate + "\n")),
 						new TextComponent(StringReplace.string("&fDatabase &8⏵ " + ((MySQL.isConnected) ? "&cYes - Connected (MySQL)\n" : "&cNo\n"))),
 						new TextComponent(StringReplace.string("&fResource ID (Spigot) &8⏵ &c" + Data.resourceId + "\n")),

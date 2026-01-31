@@ -368,6 +368,8 @@ public class ConfigManager {
         config.LOWERING_BAN_TIME_WITHOUT_DEATH = cnf.getDouble("lowering-ban.time-without-death");
         config.LOWERING_BAN_LOWERED_LEVEL = cnf.getInt("lowering-ban.lowered-level");
         config.LOWERING_BAN_MAX_BAN_LEVEL = cnf.getInt("lowering-ban.max-ban-level");
+
+        // Lives
         config.LIVES_ENABLE = cnf.getBoolean("lives.enable");
         config.LIVES_TOGGLE_INFO = cnf.getBoolean("lives.toggle-info");
         config.LIVES_DEFAULT_VISIBLE = cnf.getBoolean("lives.default-visible");
@@ -381,6 +383,19 @@ public class ConfigManager {
         config.LIVES_KILLER_GIVE_LIVE = cnf.getBoolean("lives.killer-give-live");
         config.LIVES_RENEWING_LIVES_ENABLE = cnf.getBoolean("lives.renewing-lives.enable");
         config.LIVES_RENEWING_LIVES_TIME_WITHOUT_DEATH = cnf.getDouble("lives.renewing-lives.time-without-death");
+        // Lives disabled - disable all values
+        if (!config.LIVES_ENABLE)
+        {
+            config.LIVES_TOGGLE_INFO = false;
+            config.LIVES_DEFAULT_VISIBLE = false;
+            config.LIVES_BAR_INFO_ENABLED = false;
+            config.NO_LIVES_INFO_ENABLED = false;
+            config.LIVES_DEFAULT_COUNT = 0;
+            config.LIVES_MAX_COUNT = 0;
+            config.LIVES_AFTER_DEATH = 0;
+            config.LIVES_KILLER_GIVE_LIVE = false;
+            config.LIVES_RENEWING_LIVES_ENABLE = false;
+        }
 
         // Banning
         config.DEATH_REASON_ENABLE = cnf.getBoolean("death-reason-enable");

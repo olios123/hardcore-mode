@@ -70,6 +70,7 @@ public final class Main extends JavaPlugin implements Listener {
         Data.resources = getDataFolder();
         Data.SSID = Data.SSID();
 
+        // Register events
         getServer().getPluginManager().registerEvents(new PlayerDeath(), Data.plugin);
         getServer().getPluginManager().registerEvents(new UserDataManager(), Data.plugin);
         getServer().getPluginManager().registerEvents(new PlayerKick(), Data.plugin);
@@ -116,7 +117,7 @@ public final class Main extends JavaPlugin implements Listener {
 
         // Load config and check if everything is ok
         // Check config correctness
-        File localConfig = getConfigLocal();
+        File localConfig = getLocalConfig();
         AtomicBoolean missing = new AtomicBoolean(false);
         if (localConfig.exists())
         {
@@ -169,10 +170,10 @@ public final class Main extends JavaPlugin implements Listener {
 
         Main.log("");
         Main.log(ANSI_RED + "  ####   ####   " + ANSI_RESET + "|");
-        Main.log(ANSI_RED + " ###### ######  " + ANSI_RESET + "| Version: " + ANSI_GREEN + Data.pluginVersion);
+        Main.log(ANSI_RED + " ###### ######  " + ANSI_RESET + "| Version: " + ANSI_GREEN + Data.version);
         Main.log(ANSI_RED + "  ###########   " + ANSI_RESET + "| SSID: " + ANSI_GREEN + Data.SSID);
         Main.log(ANSI_RED + "   #########    " + ANSI_RESET + "| Server: " + ANSI_GREEN + Bukkit.getServer().getBukkitVersion());
-        Main.log(ANSI_RED + "     #####      " + ANSI_RESET);
+        Main.log(ANSI_RED + "     #####      " + ANSI_RESET + "|");
         Main.log("");
 
         // Some variables are missing
@@ -193,7 +194,7 @@ public final class Main extends JavaPlugin implements Listener {
         }
 
         // Checking for BETA version of a plugin
-        if (Data.pluginVersion.contains("BETA"))
+        if (Data.version.contains("BETA"))
         {
             // Send message to OP-s
             for (Player player : Bukkit.getServer().getOnlinePlayers())
@@ -219,10 +220,13 @@ public final class Main extends JavaPlugin implements Listener {
 
 
         // Lives system
-        if (FilesManager.getConfigYml().getBoolean("lives.enable"))
+        if (ConfigManager.config.LIVES_ENABLE)
         {
             Lives.enable();
-            if (FilesManager.getConfigYml().getBoolean("lives.renewing-lives.enable")) Lives.run();
+            if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE)
+            {
+                Lives.run();
+            }
         }
 
         // Lowering bans
@@ -284,7 +288,7 @@ public final class Main extends JavaPlugin implements Listener {
                 .replace(")", "");
     }
 
-    private File getConfigLocal()
+    private File getLocalConfig()
     {
         InputStream is = getResource("config.yml");
 

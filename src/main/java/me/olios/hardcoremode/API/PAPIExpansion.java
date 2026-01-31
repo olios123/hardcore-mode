@@ -44,7 +44,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @Override
     public String getVersion()
     {
-        return Data.pluginVersion;
+        return Data.version;
     }
 
     @Override

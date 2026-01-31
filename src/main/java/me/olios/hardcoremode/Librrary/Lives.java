@@ -22,10 +22,12 @@ public class Lives {
 
     public static void enable()
     {
-        AtomicInteger step = new AtomicInteger(0);
+        if (!ConfigManager.config.LIVES_ENABLE) return;
 
         if (!ConfigManager.config.LIVES_BAR_INFO_ENABLED &&
             !ConfigManager.config.NO_LIVES_INFO_ENABLED) return;
+
+        AtomicInteger step = new AtomicInteger(0);
 
         Bukkit.getScheduler().runTaskTimer(Data.plugin, () ->
         {
