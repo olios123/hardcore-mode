@@ -18,6 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -74,8 +75,8 @@ public class MessagesManager {
         Object msg = languageYml.get(message.toString().toLowerCase().replace("_", "-"));
         Map<String, Object> placeholders = PAPICustom.getStaticPlaceholders();
 
-        // Add additional placeholders if given
-        additionalPlaceholders.forEach(placeholders::putIfAbsent);
+        // Add additional placeholders if given (allow to overwrite)
+        placeholders.putAll(additionalPlaceholders);
 
         // Message is list
         if (msg instanceof List<?>)
@@ -98,6 +99,15 @@ public class MessagesManager {
             else string = StringReplace.stringPlayer(string, p, placeholders);
 
             p.sendMessage(string);
+        }
+    }
+
+    public static void sendMessageSender(CommandSender sender,
+                                         Data.Message message) {
+        if (sender instanceof Player) {
+            MessagesManager.sendMessage((Player) sender, message);
+        } else {
+            MessagesManager.sendLogMessage(message);
         }
     }
 

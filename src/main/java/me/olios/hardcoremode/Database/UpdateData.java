@@ -24,8 +24,17 @@ public class UpdateData {
                 for (Player player : Bukkit.getOnlinePlayers())
                 {
                     String uuid = player.getUniqueId().toString();
-
                     UserData userData = UserDataManager.load(uuid);
+
+//                    String updateQuery = "SELECT * FROM `players` WHERE `uuid` = ?";
+//
+//                    try (PreparedStatement preparedStatement = MySQL.connection.prepareStatement(updateQuery))
+//                    {
+//                        preparedStatement.setString(1, uuid);
+//                        preparedStatement.executeUpdate();
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
 
                     if (MySQL.resultNotNull(MySQL.queryGet
                             ("SELECT * FROM `players` WHERE `uuid`='" + uuid + "'")

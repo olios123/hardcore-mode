@@ -48,7 +48,6 @@ public class PAPICustom {
         placeholders.put("%hardcoremode_config_lives_max-count%", ConfigManager.config.LIVES_MAX_COUNT);
         placeholders.put("%hardcoremode_config_lives_renewing-lives_enable%", ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE);
         placeholders.put("%hardcoremode_config_lives_renewing-lives_time-without-death%", ConfigManager.config.LIVES_RENEWING_LIVES_TIME_WITHOUT_DEATH);
-        placeholders.put("%hardcoremode_config_admin-no-ban-after-death%", ConfigManager.config.ADMIN_NO_BAN_AFTER_DEATH);
         placeholders.put("%hardcoremode_config_death-reason-enable%", ConfigManager.config.DEATH_REASON_ENABLE);
         placeholders.put("%hardcoremode_config_death-lightning%", ConfigManager.config.DEATH_LIGHTNING);
         placeholders.put("%hardcoremode_config_blood%", ConfigManager.config.BLOOD);

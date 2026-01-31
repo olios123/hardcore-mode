@@ -4,6 +4,7 @@ import me.olios.hardcoremode.Data;
 import me.olios.hardcoremode.Managers.ConfigManager;
 import me.olios.hardcoremode.Managers.PermissionsManager;
 import me.olios.hardcoremode.Managers.UserDataManager;
+import me.olios.hardcoremode.Objects.Config;
 import me.olios.hardcoremode.Objects.UserData;
 import org.bukkit.entity.Player;
 
@@ -12,29 +13,67 @@ import java.util.SortedMap;
 
 public class BanTime {
 
-    public static double get(Player p, boolean life, boolean ... ignoreLives)
+    public static class BanResult {
+        private double banTime;
+        private boolean lostLive;
+
+        public BanResult() {
+            this.banTime = 0;
+            this.lostLive = false;
+        }
+
+        public void setBanTime(double banTime) {
+            this.banTime = banTime;
+        }
+        public void setLostLive(boolean lostLive) {
+            this.lostLive = lostLive;
+        }
+
+        public double getBanTime() {
+            return banTime;
+        }
+        public boolean isLostLive() {
+            return lostLive;
+        }
+    }
+
+    public static BanResult calculate(Player p, boolean life, boolean ... ignoreLives)
     {
         // Refresh permissions
         p.recalculatePermissions();
         String uuid = p.getUniqueId().toString();
 
         UserData userData = UserDataManager.load(uuid);
+        BanResult banResult = new BanResult();
 
-        if (PermissionsManager.checkPermissions(p, Data.Permission.NODEATH)) return 0.0;
-        if (p.isOp() && ConfigManager.config.ADMIN_NO_BAN_AFTER_DEATH) return 0.0;
+        // Player is op and don't allow for ban
+        if (p.isOp() && !ConfigManager.config.ALLOW_BAN_OP) return banResult;
+
+        // Check if player can have permission that will prevent ban
+        if (!ConfigManager.config.BAN_PERMISSION.equals("disabled"))
+        {
+            // No death permission and player have it
+            if (ConfigManager.config.BAN_PERMISSION.equals("nodeath") &&
+                    PermissionsManager.checkPermissions(p, Data.Permission.NODEATH)) return banResult;
+
+            // Death permission and player doesn't have it
+            if (ConfigManager.config.BAN_PERMISSION.equals("death") &&
+                !PermissionsManager.checkPermissions(p, Data.Permission.DEATH)) return banResult;
+        }
 
         // Player still has lives
-        if (userData.lives - 1 >= 0 && ignoreLives.length == 0)
+        if (ConfigManager.config.LIVES_ENABLE && (userData.lives - 1 >= 0 && ignoreLives.length == 0))
         {
             // Remove life if is not check
             if (life)
             {
                 userData.lives -= 1;
                 UserDataManager.save(userData);
+                banResult.lostLive = true;
             }
-            return 0.0;
+            return banResult;
         }
-        else // Player don't have any lives left
+        else // Player doesn't have any lives left
         {
             // Static ban time
             if (ConfigManager.config.BAN_TYPE.equals("constant"))
@@ -48,15 +87,21 @@ public class BanTime {
                         double banTime = entry.getValue();
 
                         // Check if player has rank
-                        if (p.hasPermission(rank)) return banTime;
+                        if (p.hasPermission(rank))
+                        {
+                            banResult.setBanTime(banTime);
+                            return banResult;
+                        }
                     }
 
                     // Rank not found or player doesn't have one
-                    return ConfigManager.config.BAN_RANK_TIME_RANKS.get("default");
+                    banResult.banTime = ConfigManager.config.BAN_RANK_TIME_RANKS.get("default");
+                    return banResult;
                 }
                 else // Everyone have the same ban time
                 {
-                    return ConfigManager.config.BAN_TIME;
+                    banResult.banTime = ConfigManager.config.BAN_TIME;
+                    return banResult;
                 }
             }
             else if (ConfigManager.config.BAN_TYPE.equals("increasing")) // Dynamic ban time
@@ -75,10 +120,9 @@ public class BanTime {
                         // Check if player has permission
                         if (p.hasPermission(rank))
                         {
-                            permissionFound = true;
-
                             // Get ban length from function
-                            return foundBanLength(rankBanLength, userData);
+                            banResult.setBanTime(foundBanLength(rankBanLength, userData));
+                            return banResult;
                         }
                     }
 
@@ -88,18 +132,20 @@ public class BanTime {
                         SortedMap<Integer, Double> defaultBans = ConfigManager.config.BAN_RANK_LENGTH_RANKS.get("default");
 
                         // Get ban length from function
-                        return foundBanLength(defaultBans, userData);
+                        banResult.setBanTime(foundBanLength(defaultBans, userData));
+                        return banResult;
                     }
                 }
                 else // Ban time is always the same for every player
                 {
                     // Get ban length from function
-                    return foundBanLength(ConfigManager.config.BAN_LENGTH, userData);
+                    banResult.setBanTime(foundBanLength(ConfigManager.config.BAN_LENGTH, userData));
+                    return banResult;
                 }
             }
         }
 
-        return 0.0;
+        return banResult;
     }
 
     public static double foundBanLength(SortedMap<?, ?> map,

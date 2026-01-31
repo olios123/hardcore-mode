@@ -40,7 +40,6 @@ public class EntityDamage implements Listener {
 
         // Player
         Player p = ((Player) entity).getPlayer();
-        String uuid = p.getUniqueId().toString();
         p.recalculatePermissions();
 
         // Check if player can bleed
@@ -49,6 +48,9 @@ public class EntityDamage implements Listener {
         disableCause.add(EntityDamageEvent.DamageCause.DRYOUT);
         disableCause.add(EntityDamageEvent.DamageCause.POISON);
         disableCause.add(EntityDamageEvent.DamageCause.VOID);
+        disableCause.add(EntityDamageEvent.DamageCause.CRAMMING);
+        disableCause.add(EntityDamageEvent.DamageCause.STARVATION);
+        disableCause.add(EntityDamageEvent.DamageCause.WORLD_BORDER);
 
         // If damage cause is disabled
         if (disableCause.contains(damageCause)) return;
@@ -84,7 +86,7 @@ public class EntityDamage implements Listener {
         BukkitRunnable runnable = new BukkitRunnable()
         {
             int currentRepeat = 0;
-            BlockData redConcrete = Bukkit.createBlockData(Material.RED_CONCRETE);
+            final BlockData redConcrete = Bukkit.createBlockData(Material.RED_CONCRETE);
 
             @Override
             public void run()

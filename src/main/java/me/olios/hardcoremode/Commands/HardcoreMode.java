@@ -8,6 +8,7 @@ package me.olios.hardcoremode.Commands;
 
 import me.olios.hardcoremode.Data;
 import me.olios.hardcoremode.Database.MySQL;
+import me.olios.hardcoremode.Framework.CommandAction;
 import me.olios.hardcoremode.Librrary.Replace.StringReplace;
 import me.olios.hardcoremode.Librrary.TextCreator;
 import me.olios.hardcoremode.Main;
@@ -26,68 +27,149 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HardcoreMode {
+public class HardcoreMode extends CommandAction {
 
-	public static void executeCommand(CommandSender sender, Command cmd, String label, String[] args)
+	public HardcoreMode(Data.Permission permission, String usage) {
+		super(permission, usage);
+	}
+
+	@Override
+	public void cmd(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender instanceof Player) {
+			Player player = ((Player) sender).getPlayer();
+			player.recalculatePermissions();
+			cmdPlayer(player, cmd, label, args);
+		} else {
+			cmdConsole(sender, cmd, label, args);
+		}
+	}
+
+	private void cmdConsole(CommandSender sender, Command cmd, String label, String[] args)
 	{
-		// Sender is player
-		if (sender instanceof Player)
+		// Default help
+		if (args.length == 0 || args[0].equals("help"))
 		{
-			Player p = ((Player) sender).getPlayer();
-			p.recalculatePermissions(); // Refresh permissions
+			Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.version + "&c)"));
+			Main.log(StringReplace.string("&fAuthor: &colios"));
+			Main.log(StringReplace.string("&fCommands: &c/hardcoremode commands"));
+			Main.log(StringReplace.string("&fAbout: &c/hardcoremode about"));
+			Main.log("");
+			Main.log(StringReplace.string("&fDiscord: &9" + Data.discord));
+			Main.log(StringReplace.string("&fSpigot/Docs: &e" + Data.resourceURL));
+			return;
+		}
 
-			// Help
-			if (args.length == 0 || args[0].equals("help"))
-			{
-				p.sendMessage(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.pluginVersion + "&c)"));
-				p.sendMessage(StringReplace.string("&fAuthor: &colios"));
-
-				TextCreator commands = new TextCreator("/hardcoremode commands");
-				commands.createCommand();
-
-				p.spigot().sendMessage(
-						new TextComponent(StringReplace.string("&fCommands: ")),
-						commands.get()
-				);
-
-				TextCreator about = new TextCreator("/hardcoremode about");
-				about.createCommand();
-
-				p.spigot().sendMessage(
-						new TextComponent(StringReplace.string("&fAbout: ")),
-						about.get()
-				);
-
-				// Discord
-				TextCreator discord = new TextCreator("Discord");
-				discord.COLOR = ChatColor.BLUE;
-				discord.UNDERLINED = true;
-				discord.addClickEvent(ClickEvent.Action.OPEN_URL, Data.discord);
-				discord.addHoverEvent(HoverEvent.Action.SHOW_TEXT, "&fClick to join &9Discord &fsupport server.");
-
-				// Spigot
-				TextCreator spigot = new TextCreator("Spigot/Docs");
-				spigot.COLOR = ChatColor.YELLOW;
-				spigot.UNDERLINED = true;
-				spigot.addClickEvent(ClickEvent.Action.OPEN_URL, Data.resourceURL);
-				spigot.addHoverEvent(HoverEvent.Action.SHOW_TEXT, "&fClick to open &eSpigot/Docs &fpage.");
-
-				p.spigot().sendMessage(
-						new TextComponent("\n"),
-						discord.get(), new TextComponent("   "), spigot.get());
+		switch (args[0]) {
+			case "about": {
+				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- About"));
+				Main.log("");
+				MessagesManager.sendLogMessage(Data.Message.CMD_ABOUT);
+				break;
 			}
 
-			// About
-			else if (args[0].equals("about"))
-			{
+			case "commands": {
+				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- Commands"));
+				Main.log("");
+
+				for (Map.Entry<String, Map<String, Object>> entry :
+						Data.plugin.getDescription().getCommands().entrySet()) {
+					String command = entry.getKey();
+					Map<String, Object> description = entry.getValue();
+
+					String usage = description.get("usage").toString().replace(command, "");
+
+					Main.log(StringReplace.string("&c/" + command + "&f" + usage));
+					Main.log(StringReplace.string("  &7" +
+							description.get("description").toString()));
+				}
+				break;
+			}
+
+			case "permissions": {
+				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- Permissions"));
+				Main.log("");
+
+				Data.plugin.getDescription().getPermissions().forEach(permission ->
+				{
+					Main.log(StringReplace.string("&c" + permission.getName()));
+					Main.log(StringReplace.string("  &7" + permission.getDescription()));
+				});
+				break;
+			}
+
+			case "placeholders": {
+				Main.log(StringReplace.string("&cThe list of placeholders is available at this link:"));
+				Main.log(StringReplace.string("&f" + Data.resourceDocs));
+				break;
+			}
+
+			case "reload": {
+				ConfigManager.reload();
+				MessagesManager.sendLogMessage(Data.Message.RELOAD_COMPLETE);
+				break;
+			}
+
+			default: {
+				Map<String, Object> placeholders = new HashMap<>();
+				placeholders.put("%command%", "hardcoremode " + this.getUsage());
+
+				MessagesManager.sendLogMessage(Data.Message.CMD_INCORRECT_USE, placeholders);
+				break;
+			}
+		}
+	}
+
+	private void cmdPlayer(Player p, Command cmd, String label, String[] args)
+	{
+		if (args.length == 0 || args[0].equals("help")) {
+			p.sendMessage(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.version + "&c)"));
+			p.sendMessage(StringReplace.string("&fAuthor: &colios"));
+
+			TextCreator commands = new TextCreator("/hardcoremode commands");
+			commands.createCommand();
+
+			p.spigot().sendMessage(
+					new TextComponent(StringReplace.string("&fCommands: ")),
+					commands.get()
+			);
+
+			TextCreator about = new TextCreator("/hardcoremode about");
+			about.createCommand();
+
+			p.spigot().sendMessage(
+					new TextComponent(StringReplace.string("&fAbout: ")),
+					about.get()
+			);
+
+			// Discord
+			TextCreator discord = new TextCreator("Discord");
+			discord.COLOR = ChatColor.BLUE;
+			discord.UNDERLINED = true;
+			discord.addClickEvent(ClickEvent.Action.OPEN_URL, Data.discord);
+			discord.addHoverEvent(HoverEvent.Action.SHOW_TEXT, "&fClick to join &9Discord &fsupport server.");
+
+			// Spigot
+			TextCreator spigot = new TextCreator("Spigot/Docs");
+			spigot.COLOR = ChatColor.YELLOW;
+			spigot.UNDERLINED = true;
+			spigot.addClickEvent(ClickEvent.Action.OPEN_URL, Data.resourceURL);
+			spigot.addHoverEvent(HoverEvent.Action.SHOW_TEXT, "&fClick to open &eSpigot/Docs &fpage.");
+
+			p.spigot().sendMessage(
+					new TextComponent("\n"),
+					discord.get(), new TextComponent("   "), spigot.get());
+			return;
+		}
+
+		switch (args[0]) {
+			case "about": {
 				p.sendMessage(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- About"));
 				p.sendMessage("");
 				MessagesManager.sendMessage(p, Data.Message.CMD_ABOUT);
+				break;
 			}
 
-			// Commands
-			else if (args[0].equals("commands"))
-			{
+			case "commands": {
 				if (!PermissionsManager.checkPermissions(p, Data.Permission.ADMIN))
 				{
 					MessagesManager.sendMessage(p, Data.Message.NO_PERMISSIONS);
@@ -135,11 +217,10 @@ public class HardcoreMode {
 					p.sendMessage(StringReplace.string("  &7" +
 							description.get("description").toString()));
 				}
+				break;
 			}
 
-			// Permissions
-			else if (args[0].equals("permissions"))
-			{
+			case "permissions": {
 				if (!PermissionsManager.checkPermissions(p, Data.Permission.ADMIN))
 				{
 					MessagesManager.sendMessage(p, Data.Message.NO_PERMISSIONS);
@@ -154,11 +235,10 @@ public class HardcoreMode {
 					p.sendMessage(StringReplace.string("&c" + permission.getName()));
 					p.sendMessage(StringReplace.string("  &7" + permission.getDescription()));
 				});
+				break;
 			}
 
-			// Placeholders
-			else if (args[0].equals("placeholders"))
-			{
+			case "placeholders": {
 				if (!PermissionsManager.checkPermissions(p, Data.Permission.ADMIN))
 				{
 					MessagesManager.sendMessage(p, Data.Message.NO_PERMISSIONS);
@@ -167,12 +247,10 @@ public class HardcoreMode {
 
 				p.sendMessage(StringReplace.string("&cThe list of placeholders is available at this link:"));
 				p.sendMessage(StringReplace.string("&chttps://www.spigotmc.org/resources/authors/olios123.1116758/"));
+				break;
 			}
 
-
-			// Reload plugin
-			else if (args[0].equals("reload"))
-			{
+			case "reload": {
 				// Check permissions
 				if (!PermissionsManager.checkPermissions(p, Data.Permission.RELOAD))
 				{
@@ -183,11 +261,10 @@ public class HardcoreMode {
 				ConfigManager.reload();
 
 				MessagesManager.sendMessage(p, Data.Message.PLAYER_RELOAD_COMPLETE);
+				break;
 			}
-			
-			// Debug
-			else if (args[0].equals("debug"))
-			{
+
+			case "debug": {
 				TextCreator spigotMC = new TextCreator("SpigotMC");
 				spigotMC.createLink(Data.resourceURL, ChatColor.RED);
 
@@ -201,7 +278,7 @@ public class HardcoreMode {
 				p.sendMessage(StringReplace.string("&8───── &c❤ &4Hardcore&cMode &c❤ &8─────"));
 				p.spigot().sendMessage(
 						new TextComponent(StringReplace.string("&fDeveloper &8⏵ &colios\n")),
-						new TextComponent(StringReplace.string("&fVersion &8⏵ &c" + Data.pluginVersion + "\n")),
+						new TextComponent(StringReplace.string("&fVersion &8⏵ &c" + Data.version + "\n")),
 						new TextComponent(StringReplace.string("&fUpdate? &8⏵ &c" + Data.canUpdate + "\n")),
 						new TextComponent(StringReplace.string("&fDatabase &8⏵ " + ((MySQL.isConnected) ? "&cYes - Connected (MySQL)\n" : "&cNo\n"))),
 						new TextComponent(StringReplace.string("&fResource ID (Spigot) &8⏵ &c" + Data.resourceId + "\n")),
@@ -216,107 +293,15 @@ public class HardcoreMode {
 					p.sendMessage(StringReplace.string("   &8⏵ &cPlaceholderAPI - " + Bukkit.getPluginManager().getPlugin("PlaceholderAPI").getDescription().getVersion()));
 				}
 				p.sendMessage(StringReplace.string("&8──────────────────────"));
-				// TODO możliwość dopisywania własnych napisów
+				break;
 			}
 
-
-			// Argument not found
-			else
-			{
+			default: {
 				Map<String, Object> placeholders = new HashMap<>();
-				placeholders.put("%command%", "hardcoremode [help/commands/permissions/placeholders/reload/about]");
+				placeholders.put("%command%", "hardcoremode " + this.getUsage());
 
-				MessagesManager.sendMessage(p, Data.Message.ARGUMENT_MISSING, placeholders);
-			}
-		}
-		else // Console
-		{
-			// Default help
-			if (args.length == 0 || args[0].equals("help"))
-			{
-				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ (&f" + Data.pluginVersion + "&c)"));
-				Main.log(StringReplace.string("&fAuthor: &colios"));
-				Main.log(StringReplace.string("&fCommands: &c/hardcoremode commands"));
-				Main.log(StringReplace.string("&fAbout: &c/hardcoremode about"));
-				Main.log("");
-				Main.log(StringReplace.string("&fDiscord: &9" + Data.discord));
-				Main.log(StringReplace.string("&fSpigot/Docs: &e" + Data.resourceURL));
-			}
-
-			// About
-			else if (args[0].equals("about"))
-			{
-				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- About"));
-				Main.log("");
-				MessagesManager.sendLogMessage(Data.Message.CMD_ABOUT);
-			}
-
-			// Commands
-			else if (args[0].equals("commands"))
-			{
-				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- Commands"));
-				Main.log("");
-
-				for (Map.Entry<String, Map<String, Object>> entry :
-						Data.plugin.getDescription().getCommands().entrySet())
-				{
-					String command = entry.getKey();
-					Map<String, Object> description = entry.getValue();
-
-					String usage = description.get("usage").toString().replace(command, "");
-
-					Main.log(StringReplace.string("&c/" + command + "&f" + usage));
-					Main.log(StringReplace.string("  &7" +
-							description.get("description").toString()));
-				}
-
-			}
-
-			// Permissions
-			else if (args[0].equals("permissions"))
-			{
-				Main.log(StringReplace.string("&c❤ &4Hardcore&cMode ❤ &f- Permissions"));
-				Main.log("");
-
-				Data.plugin.getDescription().getPermissions().forEach(permission ->
-				{
-					Main.log(StringReplace.string("&c" + permission.getName()));
-					Main.log(StringReplace.string("  &7" + permission.getDescription()));
-				});
-			}
-
-
-			// Placeholders
-			else if (args[0].equals("placeholders"))
-			{
-				Main.log(StringReplace.string("&cThe list of placeholders is available at this link:"));
-				Main.log(StringReplace.string("&f" + Data.resourceDocs));
-			}
-
-
-			// Reload plugin
-			else if (args[0].equals("reload"))
-			{
-				ConfigManager.reload();
-
-				MessagesManager.sendLogMessage(Data.Message.RELOAD_COMPLETE);
-			}
-
-
-			// Debug
-			else if (args[0].equals("debug"))
-			{
-
-			}
-
-
-			// Argument not found
-			else
-			{
-				Map<String, Object> placeholders = new HashMap<>();
-				placeholders.put("%command%", "hardcoremode [help/commands/permissions/placeholders/reload/about]");
-
-				MessagesManager.sendLogMessage(Data.Message.ARGUMENT_MISSING, placeholders);
+				MessagesManager.sendMessage(p, Data.Message.CMD_INCORRECT_USE, placeholders);
+				break;
 			}
 		}
 	}

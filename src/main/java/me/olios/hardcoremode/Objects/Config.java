@@ -1,7 +1,10 @@
 package me.olios.hardcoremode.Objects;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 public class Config {
 
@@ -12,6 +15,29 @@ public class Config {
     public static boolean DATABASE;
 
     // Configuration
+    public static List<PluginDeathResponse> PLUGIN_DEATH_RESPONSE;
+    public enum PluginDeathResponse {
+        PLAYER,
+        ENTITY,
+        ENVIRONMENT,
+        VOID,
+        OTHER;
+
+        private static final Set<String> ENUM_VALUES =
+                Arrays.stream(PluginDeathResponse.values())
+                        .map(Enum::name)
+                        .collect(Collectors.toSet());
+
+        public static boolean isValidEnum(String value) {
+            return ENUM_VALUES.contains(value.toUpperCase());
+        }
+
+        public static PluginDeathResponse fromString(String value) {
+            if (!isValidEnum(value)) return null;
+
+            return PluginDeathResponse.valueOf(value.toUpperCase());
+        }
+    }
     public static String BAN_TYPE;
     public static boolean CUSTOM_BAN_COMMAND_ENABLE;
     public static Object CUSTOM_BAN_COMMAND_CMD;
@@ -27,6 +53,8 @@ public class Config {
     public static double LOWERING_BAN_TIME_WITHOUT_DEATH;
     public static int LOWERING_BAN_LOWERED_LEVEL;
     public static int LOWERING_BAN_MAX_BAN_LEVEL;
+
+    // Lives
     public static boolean LIVES_ENABLE;
     public static boolean LIVES_TOGGLE_INFO;
     public static boolean LIVES_DEFAULT_VISIBLE;
@@ -41,11 +69,10 @@ public class Config {
     public static boolean LIVES_RENEWING_LIVES_ENABLE;
     public static double LIVES_RENEWING_LIVES_TIME_WITHOUT_DEATH;
 
-    // Admin
-    public static boolean ADMIN_NO_BAN_AFTER_DEATH;
-
     // Banning
     public static boolean DEATH_REASON_ENABLE;
+    public static boolean ALLOW_BAN_OP;
+    public static String BAN_PERMISSION;
 
     // Effects
     public static boolean DEATH_LIGHTNING;

@@ -1,6 +1,7 @@
 package me.olios.hardcoremode.Commands;
 
 import me.olios.hardcoremode.Data;
+import me.olios.hardcoremode.Framework.CommandAction;
 import me.olios.hardcoremode.Librrary.Numeric;
 import me.olios.hardcoremode.Librrary.Replace.StringReplace;
 import me.olios.hardcoremode.Managers.ConfigManager;
@@ -17,7 +18,16 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class Lives {
+public class Lives extends CommandAction {
+
+    public Lives(Data.Permission permission, String usage) {
+        super(permission, usage);
+    }
+
+    @Override
+    public void cmd(CommandSender sender, Command cmd, String label, String[] args) {
+        executeCommand(sender, cmd, label, args);
+    }
 
     public static void executeCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
@@ -35,12 +45,20 @@ public class Lives {
             p.recalculatePermissions(); // Refresh permissions
             String uuid = p.getUniqueId().toString();
 
-            UserData userData = UserDataManager.load(p.getUniqueId().toString());
+            Map<String, Object> additionalPlaceholders = new HashMap<>();
+            if (!ConfigManager.config.LIVES_ENABLE)
+            {
+                additionalPlaceholders.put("%hardcoremode_lives%", "DISABLED");
+            }
 
-            MessagesManager.sendMessage(p, Data.Message.CMD_LIVES);
+            MessagesManager.sendMessage(p, Data.Message.CMD_LIVES, additionalPlaceholders);
 
-            if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE ||
-                    ConfigManager.config.LOWERING_BAN_ENABLE) p.sendMessage("");
+            if (ConfigManager.config.LIVES_ENABLE && (
+                    ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE ||
+                    ConfigManager.config.LOWERING_BAN_ENABLE)
+            ) {
+                p.sendMessage("");
+            }
 
             // If renewing lives is enabled
             if (ConfigManager.config.LIVES_RENEWING_LIVES_ENABLE)
@@ -246,4 +264,6 @@ public class Lives {
             else MessagesManager.sendLogMessage(Data.Message.CMD_INCORRECT_USE);
         }
     }
+
+
 }

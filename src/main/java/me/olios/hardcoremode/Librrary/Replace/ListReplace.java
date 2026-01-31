@@ -3,6 +3,7 @@ package me.olios.hardcoremode.Librrary.Replace;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.olios.hardcoremode.API.PAPICustom;
 import me.olios.hardcoremode.Data;
+import me.olios.hardcoremode.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -25,13 +26,14 @@ public class ListReplace {
         Map<String, Object> placeholders = PAPICustom.getStaticPlaceholders();
 
         // Add additional placeholders if given
-        additionalPlaceholders.forEach(placeholders::putIfAbsent);
+        placeholders.putAll(additionalPlaceholders);
 
         String msg = "";
         for (String x : list)
         {
             msg = x;
             if (target != null && Data.PAPI) msg = PlaceholderAPI.setPlaceholders(target, msg);
+
             for (Map.Entry<String, Object> entry : placeholders.entrySet())
             {
                 msg = msg.replace(entry.getKey(), String.valueOf(entry.getValue()));

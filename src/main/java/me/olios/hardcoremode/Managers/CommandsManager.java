@@ -10,6 +10,8 @@ import me.olios.hardcoremode.Commands.HardcoreMode;
 import me.olios.hardcoremode.Commands.Lives;
 import me.olios.hardcoremode.Commands.Unban;
 import me.olios.hardcoremode.Data;
+import me.olios.hardcoremode.Framework.CommandAction;
+import me.olios.hardcoremode.Main;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -17,25 +19,61 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandsManager {
 
     public static void manageCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
+        CommandAction command = null;
+
         switch(cmd.getName())
         {
             case "hm":
-            case "hardcoremode":
-                HardcoreMode.executeCommand(sender, cmd, label, args);
+            case "hardcoremode": {
+                command = new HardcoreMode(null, "[help/commands/permissions/placeholders/reload/about]");
                 break;
-            case "lives":
-                Lives.executeCommand(sender, cmd, label, args);
+            }
+            case "lives": {
+                command = new Lives(null, "[add/set/remove/show/hide/info] [player/all] [amount]");
                 break;
-            case "unban":
-                Unban.executeCommand(sender, cmd, label, args);
+            }
+            case "unban": {
+                command = new Unban(Data.Permission.UNBAN, "<player>");
                 break;
+            }
         }
+
+        if (command == null) return;
+        executeCommand(command, sender, cmd, label, args);
+    }
+
+    private static void executeCommand(CommandAction commandAction, CommandSender sender, Command cmd, String label, String[] args) {
+        Data.Permission permission = commandAction.getPermission();
+        String usage = commandAction.getUsage();
+        int requiredArgs = commandAction.requiredArgs();
+
+        // Check permissions for player
+        if (sender instanceof Player && permission != null) {
+            Player player = ((Player) sender).getPlayer();
+            player.recalculatePermissions();
+
+            // Player doesn't have required permission
+            if (!PermissionsManager.checkPermissions(player, permission)) {
+                MessagesManager.sendMessageSender(sender, Data.Message.NO_PERMISSIONS);
+                return;
+            }
+        }
+
+        // Check required args
+        if (args.length < requiredArgs) {
+            MessagesManager.sendMessageSender(sender, Data.Message.CMD_INCORRECT_USE);
+            return;
+        }
+
+        // Execute command
+        commandAction.cmd(sender, cmd, label, args);
     }
 
     public static List<String> manageCompleter(CommandSender sender, Command cmd, String label, String[] args)

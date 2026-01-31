@@ -17,17 +17,22 @@ public class NickUpdater {
             if (Bukkit.getOnlinePlayers().isEmpty()) return;
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                String prefix = StringReplace.string(ConfigManager.config.NICK_INFO, p);
-
-                Scoreboard scoreboard = p.getScoreboard();
-                Team team = scoreboard.getTeam("hardcoremode:" + prefix);
-                if (team == null) team = scoreboard.registerNewTeam("hardcoremode:" + prefix);
-
-                team.setPrefix(prefix);
-
-                team.addEntry(p.getName());
+                updateNick(p);
             }
         }, 0, 20 * 5); // Every 5 sec
+    }
+
+    public static void updateNick(Player p)
+    {
+        String prefix = StringReplace.string(ConfigManager.config.NICK_INFO, p);
+
+        Scoreboard scoreboard = p.getScoreboard();
+        Team team = scoreboard.getTeam("hardcoremode:" + prefix);
+        if (team == null) team = scoreboard.registerNewTeam("hardcoremode:" + prefix);
+
+        team.setPrefix(prefix);
+
+        team.addEntry(p.getName());
     }
 
 }
