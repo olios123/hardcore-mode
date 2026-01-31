@@ -73,7 +73,7 @@ public class BanTime {
             }
             return banResult;
         }
-        else // Player don't have any lives left
+        else // Player doesn't have any lives left
         {
             // Static ban time
             if (ConfigManager.config.BAN_TYPE.equals("constant"))

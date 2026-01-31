@@ -305,8 +305,10 @@ allow-ban-op: false
 # You need to add the permission to the player.
 # "nodeath" - ban players without permission "hardcoremode.nodeath"
 # "death" - ban only players with permission "hardcoremode.death"
-# WARNING! Possible conflict with "allow-ban-op", recommended setting "allow-ban-op" to false
-# Due to the fact that the OP always has all permissions, the plugin may reach incorrect conclusions whether the person should be banned.
+# WARNING! Interaction with "allow-ban-op":
+# - In Minecraft, OPs normally have all permissions by default.
+# - If you set ban-permission to "death" and allow-ban-op to true, OPs will also be bannable.
+# - If you want OPs to be protected, keep allow-ban-op set to false (recommended).
 ban-permission: "nodeath" # nodeath / death / disabled
 # *------------------------------------*
 #

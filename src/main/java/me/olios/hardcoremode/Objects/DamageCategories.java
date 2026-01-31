@@ -30,6 +30,7 @@ public class DamageCategories {
         register(Config.PluginDeathResponse.ENVIRONMENT,
                 EntityDamageEvent.DamageCause.CAMPFIRE,
                 EntityDamageEvent.DamageCause.CONTACT,
+                EntityDamageEvent.DamageCause.BLOCK_EXPLOSION,
                 EntityDamageEvent.DamageCause.DROWNING,
                 EntityDamageEvent.DamageCause.DRYOUT,
                 EntityDamageEvent.DamageCause.FALL,

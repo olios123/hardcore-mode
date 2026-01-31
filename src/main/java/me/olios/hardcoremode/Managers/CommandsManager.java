@@ -59,7 +59,7 @@ public class CommandsManager {
             Player player = ((Player) sender).getPlayer();
             player.recalculatePermissions();
 
-            // Player don't have required permission
+            // Player doesn't have required permission
             if (!PermissionsManager.checkPermissions(player, permission)) {
                 MessagesManager.sendMessageSender(sender, Data.Message.NO_PERMISSIONS);
                 return;

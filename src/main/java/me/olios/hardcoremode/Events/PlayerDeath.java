@@ -446,7 +446,7 @@ public class PlayerDeath implements Listener {
     private void addBanLevel(Player p, UserData userData) {
         if (!ConfigManager.config.BAN_TYPE.equals("increasing")) return;
 
-        // Ban time is baned on rank
+        // Ban time is based on rank
         if (ConfigManager.config.BAN_RANK_TIME_ENABLE) {
             // If player doesn't have any permission from the list
             boolean permissionFound = false;
